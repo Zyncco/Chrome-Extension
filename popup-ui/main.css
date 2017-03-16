@@ -1,0 +1,31 @@
+*
+{
+	margin: 0;
+	padding: 0;
+}
+
+body
+{
+	padding: 20px;
+}
+
+#signin-google
+{
+	height: 46px;
+	width: 191px;
+
+	cursor: pointer;
+
+	background-image: url('/assets/button-google.png');
+}
+
+#signin-google:hover,
+#signin-google:focus
+{
+	background-image: url('/assets/button-google-focus.png');
+}
+
+#signin-google:active
+{
+	background-image: url('/assets/button-google-active.png');
+}
