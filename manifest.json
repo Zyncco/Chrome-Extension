@@ -4,21 +4,22 @@
 	"name": "Zync",
 	"version": "1.0.0",
 
-	"description": "End-to-End encrypted cloud clipboard synchronisation.",
+	"description": "End-to-End encrypted cloud clipboard.",
 	"icons": {
-		"16": "/assets/icon/16x.png",
-		"24": "/assets/icon/24x.png",
-		"32": "/assets/icon/32x.png",
-		"48": "/assets/icon/48x.png",
-		"128": "/assets/icon/128x.png"
+		"16": "/assets/logo/16x.png",
+		"24": "/assets/logo/24x.png",
+		"32": "/assets/logo/32x.png",
+		"48": "/assets/logo/48x.png",
+		"128": "/assets/logo/128x.png",
+		"256": "/assets/logo/256x.png"
 	},
 
-	"content_security_policy": "script-src 'self' https://www.gstatic.com; object-src 'self'",
+	"content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
 
 	"browser_action":
 	{
 		"default_title": "Zync",
-		"default_popup": "popup-ui/signin.html"
+		"default_popup": "popup/index.html"
 	},
 
 	"background": {

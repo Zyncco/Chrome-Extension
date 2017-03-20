@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>Zync - Sign In</title>
+
+		<style>
+*
+{
+	margin: 0;
+	padding: 0;
+}
+
+body
+{
+	width: 300px;
+
+	padding: 10px;
+
+	font-family: 'Open Sans', sans-serif;
+}
+
+.center
+{
+	margin: 10px auto;
+}
+
+.clickable
+{
+	cursor: pointer;
+}
+
+#logo
+{
+	height: 150px;
+	width: 150px;
+
+	background-image: url("/assets/logo/256x.png");
+	background-size: contain;
+}
+
+#logo.disabled
+{
+	filter: grayscale(90%);
+}
+
+#signin-why
+{
+	margin: auto 30px;
+
+	text-align: justify;
+}
+
+#signin-google
+{
+	height: 49px;
+	width: 191px;
+
+	background-image: url("/assets/signin/google/dark.png");
+}
+
+#signin-google:focus,
+#signin-google:hover
+{
+	background-image: url("/assets/signin/google/dark-focus.png");
+}
+
+#signin-google:active
+{
+	background-image: url("/assets/signin/google/dark-active.png");
+}
+
+#signin-google.disabled
+{
+	background-image: url("/assets/signin/google/dark-disabled.png");
+}
+		</style>
+	</head>
+	<body>
+		<div id="logo" class="center"></div>
+		<p id="signin-why">
+			To get started, please sign in using one of the buttons below. We use this account
+			to identify you in order to synchronize your clipboard between your devices.
+		</p>
+		<div id="signin-google" class="center clickable"></div>
+		<!-- Additional signin buttons -->
+		<div id="additional-info">
+			<a href="#">Privacy Policy</a>
+			<a href="#">Terms of Service</a>
+		</div>
+
+		<script src="/lib/firebase-app.js"></script>
+		<script src="/lib/firebase-auth.js"></script>
+		<script src="/popup/signin.js"></script>
+	</body>
+</html>
