@@ -21,26 +21,59 @@ Zync.getArrayBuffer = function (str) {
 	return result;
 }
 
-Zync.setEncryptionPassword = function (password) {
-	return crypto.subtle.importKey("raw", Zync.getArrayBuffer(password), "AES-GCM", false, ["encrypt", "decrypt"])
-		.then(function(key) {
-			let iv = crypto.getRandomValues(new Uint8Array(12));
+var AES = {
+	name: "AES-GCM",
+	length: 128
+}
 
-			return {
-				key: key,
-				iv: iv
-			}
+// This value is required and must match for encryption and decryption!
+var IV = crypto.getRandomValues(new Uint8Array(12));
+
+function testEncryption(data, password) {
+	crypto.subtle.importKey("raw", Zync.getArrayBuffer(password), "PBKDF2", false, ["deriveKey"])
+		.then(key => {
+
+			crypto.subtle.deriveKey({
+				name: "PBKDF2",
+				// This value is required, perhaps we should generate it from user ID
+				salt: crypto.getRandomValues(new Uint8Array(16)),
+				iterations: 10,
+				hash: { name: "SHA-1" }
+			}, key, AES, false, ["encrypt", "decrypt"]).then(key => {
+
+				crypto.subtle.encrypt({
+					name: "AES-GCM",
+					iv: IV
+				}, key, Zync.getArrayBuffer(data)).then(encrypted => {
+
+					console.log(encrypted);
+					console.log(String.fromCharCode.apply(null, new Uint16Array(encrypted)));
+
+					crypto.subtle.decrypt({
+						name: "AES-GCM",
+						iv: IV
+					}, key, encrypted).then(decrypted => {
+
+						console.log(decrypted);
+						console.log(String.fromCharCode.apply(null, new Uint16Array(decrypted)));
+
+					}).catch(error => {
+						console.error(error);
+					});
+
+				}).catch(error => {
+					console.error(error);
+				});
+
+			}).catch(error => {
+				console.error(error);
+			});
+
+		}).catch(error => {
+			console.error(error);
 		});
 }
 
-/*
-Zync.setEncryptionPassword('password').then(function(result) {
-	chrome.storage.local.get("encryptionKey", function(result) {
-		console.log(result);
-	})
-}).catch(function(error) {
-	console.error(error);
-})
-*/
-
-console.log(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(12))));
+testEncryption("Mazen Kotb", "mazenpassword");
+testEncryption("Brandon", "4r4f5 rtg£3$rfdfv");
+testEncryption("Super long", "asjkdjejdfiouerjn43n4jh45uir8ufjefnb3nb45j54tiourfgbwe43jklrtuiofghebnnjre");
