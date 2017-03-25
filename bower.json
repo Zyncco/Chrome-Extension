@@ -1,0 +1,25 @@
+{
+  "name": "zync",
+  "homepage": "https://zync.co",
+  "authors": [
+    "Zync <support@zync.co>"
+  ],
+  "description": "End-to-end encrypted cloud clipboard synchronization.",
+  "keywords": [
+    "e2e",
+    "encrypted",
+    "cloud",
+    "clipboard",
+    "sync",
+    "zync"
+  ],
+  "license": "TBD",
+  "private": true,
+  "ignore": [
+    "*"
+  ],
+  "dependencies": {
+    "pako": "^1.0.4",
+    "firebase": "^3.7.3"
+  }
+}

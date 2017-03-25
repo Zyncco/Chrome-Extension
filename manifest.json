@@ -3,8 +3,13 @@
 
 	"name": "Zync",
 	"version": "1.0.0",
+	// https://en.wikipedia.org/wiki/Category:Zinc_compounds
+	"version_name": "Zync Arsenide",
+	"author": "Zync <support@zync.co>",
+	"homepage_url": "https://zync.co",
 
-	"description": "End-to-End encrypted cloud clipboard.",
+	"default_locale": "en",
+	"description": "__MSG_extension_description__",
 	"icons": {
 		"16": "/assets/logo/16x.png",
 		"24": "/assets/logo/24x.png",
@@ -14,23 +19,44 @@
 		"256": "/assets/logo/256x.png"
 	},
 
-	"content_security_policy": "script-src 'self' https://www.gstatic.com https://apis.google.com; object-src 'self'",
+	// https://developer.chrome.com/extensions/manifest/incognito
+	"incognito": "not_allowed",
+	// https://developer.chrome.com/extensions/manifest/minimum_chrome_version
+	// "minimum_chrome_version": "42",
+	// https://developer.chrome.com/extensions/manifest/offline_enabled
+	"offline_enabled": false,
 
+	// https://developer.chrome.com/extensions/browserAction
 	"browser_action":
 	{
 		"default_title": "Zync",
 		"default_popup": "popup/signin.html"
 	},
 
+	// https://developer.chrome.com/extensions/background_pages
+	// "background": {},
+
+	// https://developer.chrome.com/extensions/content_scripts
+	// "content_scripts": {},
+
+	// https://developer.chrome.com/extensions/optionsV2
+	// "options_ui": {},
+
+	// https://developer.chrome.com/extensions/commands
+	"commands": {},
+
+	// https://developer.chrome.com/extensions/declare_permissions
 	"permissions": [
 		"alarms",
 		"background",
 		"clipboardRead",
 		"clipboardWrite",
 		"contextMenus",
-		"gcm",
+		"notifications",
 		"storage"
 	],
 
-	"gcm_sender_id": "103953800507"
+	"optional_permissions": [],
+
+	"content_security_policy": "script-src 'self' https://www.gstatic.com https://apis.google.com; object-src 'self'"
 }
