@@ -1,41 +1,48 @@
-/*
 firebase.initializeApp({
 	apiKey: "AIzaSyA468GT4W0147Oz-uClJo0RCingBRo8q8A",
-	authDomain: "zync-b3bce.firebaseapp.com"
-});
-*/
-
-firebase.initializeApp({
-	apiKey: "AIzaSyBAmFUbMsY2nikroqOm0lpgJJAd7luYg90",
-	authDomain: "zync-123456.firebaseapp.com"
+	authDomain: "zync-b3bce.firebaseapp.com",
+	messagingSenderId: "3961871122"
 });
 
 providers = {
 	google: firebase.auth.GoogleAuthProvider
 }
 
-function handle_error(error) {
-	console.error(error);
-}
+var auth = firebase.auth();
+var messaging = firebase.messaging();
 
 function handle_signin(provider) {
 	document.getElementById("signin-" + provider).addEventListener('click', () => {
 		provider = new providers[provider]();
 
-		firebase.auth().signInWithPopup(provider).then(result => {
-			result.user.getToken().then(result => {
-				fetch("https://api.zync.co/v0/user/callback?token=" + result, {
+		auth.signInWithPopup(provider)
+			.then(result => {
+				return result.user.getToken();
+			}).then(result => {
+				return fetch("https://api.zync.co/v0/user/authenticate?token=" + result, {
 					method: "GET",
-					mode: "no-cors",
 					redirect: "follow"
-				}).then(response => {
-					return response.json();
-				}).then(response => {
-					console.log(response);
-				}).catch(handle_error);
-			}).catch(handle_error);
-		}).catch(handle_error);
+				});
+			}).then(result => {
+				return result.json();
+			}).then(result => {
+				console.log(result);
+
+				return messaging.requestPermission();
+			}).then(() => {
+				return messaging.getToken();
+			}).then(tellVilsolTheToken).catch(console.error);
 	});
 }
+
+function tellVilsolTheToken(token) {
+	console.log(token);
+}
+
+messaging.onTokenRefresh(() => {
+	messaging.getToken()
+		.then(tellVilsolTheToken)
+		.catch(console.error);
+});
 
 handle_signin("google");
