@@ -1,79 +1,143 @@
-var Zync = {}
-var Config = {
-	apiURL: "https://api.zync.co/v0"
+const Zync = {}
+
+const encoder = new TextEncoder("utf-8");
+
+Object.defineProperties(Zync, {
+	"MINLEN_PASSWORD": {
+		get: () => { return 10; },
+		set: _ => { throw "Cannot override constant!"; }
+	},
+	"DEFLEN_SALT": {
+		get: () => { return 25; },
+		set: _ => { throw "Cannot override constant!"; }
+	},
+	"DEFLEN_IV": {
+		get: () => { return 16; },
+		set: _ => { throw "Cannot override constant!"; }
+	}
+})
+
+/**
+ * Storage (chrome.storage) Helper Functions
+ */
+
+function storageGet(key, callback, def) {
+	// TODO: Find a way to stop this function from being available when script is included.
+	if (typeof callback !== "function") { throw "You must provide a callback!"; }
+
+	chrome.storage.local.get(key, result => {
+		if (chrome.runtime.lastError) { throw chrome.runtime.lastError.message; }
+
+		if (typeof (result = result[key]) === "undefined") {
+			if (typeof def === "undefined") {
+				throw "Storage value not found for key '" + key + "'!";
+			} else {
+				result = def;
+			}
+		}
+
+		callback(result);
+	});
 }
 
-var headers = new Headers();
+function storageSet(key, value, type) {
+	// TODO: Find a way to stop this function from being available when script is included.
+	if (type && typeof value !== type) { throw "You must provide a " + type + " value!"; }
 
-Zync.authenticate = function (id_token) {
-
+	chrome.storage.local.set({ [key]: value }, () => {
+		if (chrome.runtime.lastError) { throw chrome.runtime.lastError.message; }
+	})
 }
 
-Zync.getArrayBuffer = function (str) {
-	let length = str.length;
-	let result = new ArrayBuffer(length * 2);
-	let bufferView = new Uint16Array(result);
+Zync.isSignedIn = function (callback) {
+	storageGet("signedIn", callback, false);
+}
 
-	for (let i = 0; i < length; i++) {
-		bufferView[i] = str.charCodeAt(i);
+Zync.setSignedIn = function (input) {
+	storageSet("signedIn", input, "boolean");
+}
+
+Zync.getToken = function (callback) {
+	storageGet("token", callback);
+}
+
+Zync.setToken = function (input) {
+	storageSet("token", input, "string");
+}
+
+Zync.getEncryptionPassword = function (callback) {
+	storageGet("encryptionPassword", callback);
+}
+
+Zync.setEncryptionPassword = function (input) {
+	if (typeof input !== "string" || input.lenth == 0) { throw "You must provide an encryption password!"; }
+	if (input.length < Zync.MINLEN_PASSWORD) { throw "Encryption password must be at least " + Zync.MINLEN_PASSWORD + " characters!"; }
+
+	storageSet("encryptionPassword", input);
+}
+
+/**
+ *
+ */
+
+Zync.getEncryptionKey = function (password, salt) {
+	if (typeof password === "undefined") {
+		Zync.getEncryptionPassword(password => { return Zync.getEncryptionKey(password, salt); })
+	}
+	if (typeof salt === "undefined") {
+		salt = crypto.getRandomValues(new Uint8Array(Zync.DEFLEN_SALT));
 	}
 
-	return result;
-}
+	password = encoder.encode(password);
 
-var AES = {
-	name: "AES-GCM",
-	length: 128
-}
+	let PBKDF2 = {
+		name: "PBKDF2",
+		salt: salt,
+		iterations: 1000,
+		hash: { name: "SHA-1" }
+	}
 
-// This value is required and must match for encryption and decryption!
-var IV = crypto.getRandomValues(new Uint8Array(12));
+	let AES_GCM = {
+		name: "AES-GCM",
+		length: 256
+	}
 
-function testEncryption(data, password) {
-	crypto.subtle.importKey("raw", Zync.getArrayBuffer(password), "PBKDF2", false, ["deriveKey"])
-		.then(key => {
-
-			crypto.subtle.deriveKey({
-				name: "PBKDF2",
-				// This value is required, perhaps we should generate it from user ID
-				salt: crypto.getRandomValues(new Uint8Array(16)),
-				iterations: 10,
-				hash: { name: "SHA-1" }
-			}, key, AES, false, ["encrypt", "decrypt"]).then(key => {
-
-				crypto.subtle.encrypt({
-					name: "AES-GCM",
-					iv: IV
-				}, key, Zync.getArrayBuffer(data)).then(encrypted => {
-
-					console.log(encrypted);
-					console.log(String.fromCharCode.apply(null, new Uint16Array(encrypted)));
-
-					crypto.subtle.decrypt({
-						name: "AES-GCM",
-						iv: IV
-					}, key, encrypted).then(decrypted => {
-
-						console.log(decrypted);
-						console.log(String.fromCharCode.apply(null, new Uint16Array(decrypted)));
-
-					}).catch(error => {
-						console.error(error);
-					});
-
-				}).catch(error => {
-					console.error(error);
-				});
-
-			}).catch(error => {
-				console.error(error);
-			});
-
-		}).catch(error => {
-			console.error(error);
+	return crypto.subtle.importKey("raw", password, "PBKDF2", false, ["deriveKey"])
+		.then(result => {
+			return crypto.subtle.deriveKey(PBKDF2, result, AES_GCM, false, ["encrypt", "decrypt"]);
+		}).then(result => {
+			return Promise.resolve([result, salt]);
 		});
 }
 
-testEncryption("Mazen Kotb", "mazenpassword");
-testEncryption("Brandon", "4r4f5 rtg£3$rfdfv");
-testEncryption("Super long", "asjkdjejdfiouerjn43n4jh45uir8ufjefnb3nb45j54tiourfgbwe43jklrtuiofghebnnjre");
+/**
+ * Zync Upload Steps (Deflate -> Encrypt -> Encode)
+ */
+
+Zync.deflate = function (input) {
+	return pako.deflate(input);
+}
+
+Zync.encrypt = function (input) { }
+
+Zync.encode = function (input) { }
+
+/**
+ * Zync Download Steps (Decode -> Decrypt -> Inflate)
+ */
+
+Zync.decode = function (input) { }
+
+Zync.decrypt = function (input) { }
+
+Zync.inflate = function (input) {
+	return pako.inflate(input);
+}
+
+/**
+ * Zync API Functions
+ */
+
+Zync.signin = function () {}
+
+Zync.signout = function () {}

@@ -30,17 +30,21 @@
 	"browser_action":
 	{
 		"default_title": "Zync",
-		"default_popup": "popup/signin.html"
+		"default_popup": "/popup/index.html"
 	},
 
 	// https://developer.chrome.com/extensions/background_pages
-	// "background": {},
+	"background": {
+		"page": "/background/index.html"
+	},
 
 	// https://developer.chrome.com/extensions/content_scripts
 	// "content_scripts": {},
 
 	// https://developer.chrome.com/extensions/optionsV2
-	// "options_ui": {},
+	"options_ui": {
+		"page": "/options/index.html"
+	},
 
 	// https://developer.chrome.com/extensions/commands
 	"commands": {},
@@ -53,10 +57,11 @@
 		"clipboardWrite",
 		"contextMenus",
 		"notifications",
-		"storage"
+		"storage",
+		"tabs"
 	],
 
 	"optional_permissions": [],
 
-	"content_security_policy": "script-src 'self' https://www.gstatic.com https://apis.google.com; object-src 'self'"
+	"content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
 }

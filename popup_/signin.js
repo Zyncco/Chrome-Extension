@@ -25,24 +25,8 @@ function handle_signin(provider) {
 				});
 			}).then(result => {
 				return result.json();
-			}).then(result => {
-				console.log(result);
-
-				return messaging.requestPermission();
-			}).then(() => {
-				return messaging.getToken();
-			}).then(tellVilsolTheToken).catch(console.error);
+			}).then(console.log).catch(console.error);
 	});
 }
-
-function tellVilsolTheToken(token) {
-	console.log(token);
-}
-
-messaging.onTokenRefresh(() => {
-	messaging.getToken()
-		.then(tellVilsolTheToken)
-		.catch(console.error);
-});
 
 handle_signin("google");
