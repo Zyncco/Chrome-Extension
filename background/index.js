@@ -1,3 +1,3 @@
-if (!Zync.isSignedIn()) {
-	chrome.tabs.create({ url: "/window/signin.html" })
-}
+Zync.isSignedIn(result => {
+	if (!result) { chrome.tabs.create({ url: "/window/signin.html" }); }
+})

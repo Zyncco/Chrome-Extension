@@ -21,20 +21,20 @@ Object.defineProperties(Zync, {
  * Storage (chrome.storage) Helper Functions
  */
 
-function storageGet(key, callback, def) {
+function storageGet(key, callback) {
 	// TODO: Find a way to stop this function from being available when script is included.
-	if (typeof callback !== "function") { throw "You must provide a callback!"; }
+	if (typeof callback !== "function") { throw "You must provide a callback to be called with the result!"; }
 
 	chrome.storage.local.get(key, result => {
 		if (chrome.runtime.lastError) { throw chrome.runtime.lastError.message; }
 
-		if (typeof (result = result[key]) === "undefined") {
-			if (typeof def === "undefined") {
-				throw "Storage value not found for key '" + key + "'!";
-			} else {
-				result = def;
-			}
-		}
+		if (key == null) { return callback(result); }
+
+		let keys = Object.keys(result);
+
+		if (keys.length == 0) { return callback(); }
+		if (typeof key === "string") { return callback(result[key]); }
+		if (key.length == 1) { return callback(result[keys[0]]); }
 
 		callback(result);
 	});
@@ -50,19 +50,7 @@ function storageSet(key, value, type) {
 }
 
 Zync.isSignedIn = function (callback) {
-	storageGet("signedIn", callback, false);
-}
-
-Zync.setSignedIn = function (input) {
-	storageSet("signedIn", input, "boolean");
-}
-
-Zync.getToken = function (callback) {
-	storageGet("token", callback);
-}
-
-Zync.setToken = function (input) {
-	storageSet("token", input, "string");
+	storageGet("token", result => { callback(typeof result !== "undefined"); });
 }
 
 Zync.getEncryptionPassword = function (callback) {
@@ -84,11 +72,11 @@ Zync.getEncryptionKey = function (password, salt) {
 	if (typeof password === "undefined") {
 		Zync.getEncryptionPassword(password => { return Zync.getEncryptionKey(password, salt); })
 	}
-	if (typeof salt === "undefined") {
-		salt = crypto.getRandomValues(new Uint8Array(Zync.DEFLEN_SALT));
-	}
 
-	password = encoder.encode(password);
+	// TODO: Sanity checks?
+
+	if (typeof password === "string") { password = encoder.encode(password); }
+	if (typeof salt === "undefined") { salt = crypto.getRandomValues(new Uint8Array(Zync.DEFLEN_SALT)); }
 
 	let PBKDF2 = {
 		name: "PBKDF2",
@@ -104,9 +92,8 @@ Zync.getEncryptionKey = function (password, salt) {
 
 	return crypto.subtle.importKey("raw", password, "PBKDF2", false, ["deriveKey"])
 		.then(result => {
+			// TODO: Return salt with key, or force salt generation outside of this function.
 			return crypto.subtle.deriveKey(PBKDF2, result, AES_GCM, false, ["encrypt", "decrypt"]);
-		}).then(result => {
-			return Promise.resolve([result, salt]);
 		});
 }
 
@@ -118,7 +105,24 @@ Zync.deflate = function (input) {
 	return pako.deflate(input);
 }
 
-Zync.encrypt = function (input) { }
+Zync.encrypt = function (input, key, iv) {
+	if (typeof input === "undefined") { throw "You must provide input to encrypt!"; }
+	if (typeof key === "undefined") { throw "You must provide an encryption key!"; }
+
+	// TODO: Sanity checks?
+
+	if (typeof input === "string") { input = encoder.encode(input); }
+	if (typeof iv === "undefined") { iv = crypto.getRandomValues(new Uint8Array(Zync.DEFLEN_IV)); }
+
+	let AES_GCM = {
+		name: "AES-GCM",
+		iv: iv,
+		tagLength: 128
+	}
+
+	//TODO: Return iv with encrypted data, or force iv generation outside of this function.
+	return crypto.subtle.encrypt(AES_GCM, key, input);
+}
 
 Zync.encode = function (input) { }
 
@@ -128,7 +132,24 @@ Zync.encode = function (input) { }
 
 Zync.decode = function (input) { }
 
-Zync.decrypt = function (input) { }
+Zync.decrypt = function (input, key, iv) {
+	if (typeof input === "undefined") { throw "You must provide input to decrypt!"; }
+	if (typeof key === "undefined") { throw "You must provide a decryption key!"; }
+	if (typeof iv === "undefined") { throw "You must provide the initialization value of the decryption key!"; }
+
+	// TODO: Sanity checks?
+
+	if (typeof input === "string") { input = encoder.encode(input); }
+
+	let AES_GCM = {
+		name: "AES-GCM",
+		iv: iv,
+		tagLength: 128
+	}
+
+	//TODO: Return iv with encrypted data, or force iv generation outside of this function.
+	return crypto.subtle.decrypt(AES_GCM, key, input);
+}
 
 Zync.inflate = function (input) {
 	return pako.inflate(input);
@@ -138,6 +159,6 @@ Zync.inflate = function (input) {
  * Zync API Functions
  */
 
-Zync.signin = function () {}
+Zync.signin = function () { }
 
-Zync.signout = function () {}
+Zync.signout = function () { }
