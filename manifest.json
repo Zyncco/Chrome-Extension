@@ -8,16 +8,8 @@
 	"author": "Zync <support@zync.co>",
 	"homepage_url": "https://zync.co",
 
-	"default_locale": "en",
-	"description": "__MSG_extension_description__",
-	"icons": {
-		"16": "/assets/logo/16x.png",
-		"24": "/assets/logo/24x.png",
-		"32": "/assets/logo/32x.png",
-		"48": "/assets/logo/48x.png",
-		"128": "/assets/logo/128x.png",
-		"256": "/assets/logo/256x.png"
-	},
+	"description": "End-to-end encrypted cloud clipboard synchronization.",
+	"icons": {},
 
 	// https://developer.chrome.com/extensions/manifest/incognito
 	"incognito": "not_allowed",
@@ -35,33 +27,23 @@
 
 	// https://developer.chrome.com/extensions/background_pages
 	"background": {
-		"page": "/background/index.html"
+		"page": "/background/index.html",
+		"persistent": true
 	},
 
 	// https://developer.chrome.com/extensions/content_scripts
 	// "content_scripts": {},
 
 	// https://developer.chrome.com/extensions/optionsV2
-	"options_ui": {
-		"page": "/options/index.html"
-	},
+	// "options_ui": {},
 
 	// https://developer.chrome.com/extensions/commands
 	"commands": {},
 
 	// https://developer.chrome.com/extensions/declare_permissions
 	"permissions": [
-		"alarms",
-		"background",
-		"clipboardRead",
-		"clipboardWrite",
-		"contextMenus",
-		"notifications",
-		"storage",
-		"tabs"
+		"storage"
 	],
 
-	"optional_permissions": [],
-
-	"content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
+	"optional_permissions": []
 }
