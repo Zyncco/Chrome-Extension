@@ -1,5 +1,18 @@
-let initializeConfig = function() {
+function handleError() {
+	if (chrome.runtime.lastError) {
+		// TODO: Properly display error to user
+		console.error(chrome.runtime.lastError.message);
+	}
+}
+
+function initializeConfig(clear) {
+	if (clear) {
+		chrome.storage.local.clear(handleError);
+	}
+	
 	chrome.storage.local.set({
+		"initialized": new Date().getTime(),
+
 		/* REST API URL */
 		"api.url.scheme": "https",
 		"api.url.domain": "beta-api.zync.co",
@@ -20,5 +33,11 @@ let initializeConfig = function() {
 
 		/* History */
 		"history": []
-	});
+	}, handleError);
 }
+
+chrome.storage.local.getBytesInUse(null, result => {
+	if (result === 0) {
+		initializeConfig();
+	}
+});
