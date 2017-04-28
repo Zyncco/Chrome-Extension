@@ -1,11 +1,11 @@
 {
 	"manifest_version": 2,
 
-	"name": "Zync",
+	"name": "Zyncco",
 	"version": "1.0.0",
 	// https://en.wikipedia.org/wiki/Category:Zinc_compounds
 	"version_name": "Zync Arsenide",
-	"author": "Zync <support@zync.co>",
+	"author": "Zyncco <support@zync.co>",
 	"homepage_url": "https://zync.co",
 
 	"description": "End-to-end encrypted cloud clipboard synchronization.",
@@ -21,7 +21,7 @@
 	// https://developer.chrome.com/extensions/browserAction
 	"browser_action":
 	{
-		"default_title": "Zync",
+		"default_title": "Zyncco",
 		"default_popup": "/popup/index.html"
 	},
 
