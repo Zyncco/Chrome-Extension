@@ -42,6 +42,10 @@
 
 	// https://developer.chrome.com/extensions/declare_permissions
 	"permissions": [
+		"background",
+		"contextMenus",
+		"clipboardRead",
+		"clipboardWrite",
 		"storage"
 	],
 

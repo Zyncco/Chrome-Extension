@@ -9,9 +9,10 @@ function initializeConfig(clear) {
 	if (clear) {
 		chrome.storage.local.clear(handleError);
 	}
-	
+
 	chrome.storage.local.set({
-		"initialized": new Date().getTime(),
+		/* Epoch of initialization */
+		"initialized": parseInt(new Date().getTime() / 1000),
 
 		/* REST API URL */
 		"api.url.scheme": "https",
