@@ -23,20 +23,21 @@ window.Zync = window.Zync || Zync;
 function zyncCopyHandler() {
     var bg = chrome.extension.getBackgroundPage();
 
-    bg.document.body.innerHTML = "";
 
     var helper = null;
     var helperdiv = null;
 
-    {
+    if (helper === null || helper === undefined) {
         helper = bg.document.createElement("textarea");
         helper.id = "helper";
         helper.style.position = "absolute";
         helper.style.border = "none";
         document.body.appendChild(helper);
+    } else {
+        helper.value = "";
     }
 
-    {
+    if (helperdiv === null || helperdiv === undefined) {
         helperdiv = bg.document.createElement("div");
         helperdiv.contentEditable = true;
         document.body.appendChild(helperdiv);
