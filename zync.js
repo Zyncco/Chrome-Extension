@@ -49,7 +49,11 @@ function zyncCopyHandler() {
 
     console.log("Copy listener: " + data);
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, data);
+        if (tabs[0] === undefined) {
+            // No window to report to.
+        } else {
+            chrome.tabs.sendMessage(tabs[0].id, data);
+        }
     });
 }
 
