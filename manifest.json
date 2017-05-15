@@ -11,6 +11,13 @@
     "default_title": "Zyncco",
     "default_popup": "/popup/index.html"
   },
+  "oauth2": {
+    "client_id": "958433754089-3uesevgsreu09ba7ba5svsbfh5jfhcrf.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
   "background": {
     "persistent": true,
     "scripts": [
@@ -23,19 +30,8 @@
     "clipboardRead",
     "clipboardWrite",
     "tabs",
-    "storage"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "http://*/*",
-        "https://*/*",
-        "file://*/*"
-      ],
-      "js": [
-        "other.js"
-      ]
-    }
+    "storage",
+    "identity"
   ],
   "optional_permissions": []
 }
