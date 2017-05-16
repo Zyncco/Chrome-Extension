@@ -3,7 +3,6 @@
 
 	"name": "Zyncco",
 	"version": "1.0.0",
-	// https://en.wikipedia.org/wiki/Category:Zinc_compounds
 	"version_name": "Zync Arsenide",
 	"author": "Zyncco <support@zync.co>",
 	"homepage_url": "https://zync.co",
@@ -11,19 +10,19 @@
 	"description": "End-to-end encrypted cloud clipboard synchronization.",
 	"icons": {},
 
-	// https://developer.chrome.com/extensions/manifest/incognito
 	"incognito": "not_allowed",
-	// https://developer.chrome.com/extensions/manifest/minimum_chrome_version
-	// "minimum_chrome_version": "42",
-	// https://developer.chrome.com/extensions/manifest/offline_enabled
+	"minimum_chrome_version": "42",
 	"offline_enabled": false,
 
-	// https://developer.chrome.com/extensions/browserAction
 	"browser_action":
 	{
 		"default_title": "Zyncco",
 		"default_popup": "/popup/index.html"
 	},
+
+
+
+
 
 	// https://developer.chrome.com/extensions/background_pages
 	"background": {
