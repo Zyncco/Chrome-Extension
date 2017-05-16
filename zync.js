@@ -3,6 +3,7 @@ let b_table = a_table.split(' ').map(function (s) {
     return parseInt(s, 16)
 });
 let last = "";
+let crypto = window.crypto;
 
 const Zync = {};
 
@@ -20,7 +21,7 @@ function hash(data) {
  */
 function generateRand(len) {
     if (len === undefined) len = 16;
-    return window.crypto.getRandomValues(new Uint8Array(len));
+    return crypto.getRandomValues(new Uint8Array(len));
 }
 
 function str2ab(str) {
@@ -59,10 +60,10 @@ function genKey(password, salt) {
             };
 
             // Import the key as a CryptoKey to use as a master key.
-            window.crypto.subtle.importKey("raw", str2ab(password), {name: "PBKDF2"}, false, ["deriveKey"])
+            crypto.subtle.importKey("raw", str2ab(password), {name: "PBKDF2"}, false, ["deriveKey"])
                 .then(function (cryptoKey) {
                     // Create a key based on the master key above.
-                    window.crypto.subtle.deriveKey(pbkdfAlgo, cryptoKey, keyGenAlgo, true, ["encrypt", "decrypt"])
+                    crypto.subtle.deriveKey(pbkdfAlgo, cryptoKey, keyGenAlgo, true, ["encrypt", "decrypt"])
                         .then(function (finalKey) {
                             let data = {};
                             data.key = finalKey;
@@ -106,7 +107,7 @@ Zync.encrypt = function (password, data) {
             };
             genKey(password)
                 .then(function (pwd) {
-                    window.crypto.subtle.encrypt(encryptAlgo, pwd.key, buf)
+                    crypto.subtle.encrypt(encryptAlgo, pwd.key, buf)
                         .then(function (encrypted) {
                             let payload = preparePayload(pwd.salt, encryptAlgo.iv, encrypted, hash(data));
                             resolve(payload);
@@ -133,7 +134,7 @@ Zync.decrypt = function (data, salt, iv, password) {
 
             genKey(password, salt)
                 .then(function (pwd) {
-                    window.crypto.subtle.decrypt(decryptAlgo, pwd.key, data)
+                    crypto.subtle.decrypt(decryptAlgo, pwd.key, data)
                         .then(function (decrypted) {
                             resolve(ab2str(decrypted));
                         }).catch(function (err) {
