@@ -22,6 +22,7 @@ nb-configuration.xml
 *.ipr
 *.iws
 .idea/
+.idea/vcs.xml
 
 ## Windows
 Thumbs.db
