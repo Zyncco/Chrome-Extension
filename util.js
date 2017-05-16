@@ -6,7 +6,7 @@ const ZyncUtil = {}
  * @param iv Initialisation Value for AES encryption.
  * @returns {Object} JSON object containing parameters.
  */
-ZyncUtil.getAlgoAESGCM = function(iv) {
+ZyncUtil.getAlgoAESGCM = function (iv) {
 	return {
 		name: "AES-GCM",
 		tagLength: 128,
@@ -20,7 +20,7 @@ ZyncUtil.getAlgoAESGCM = function(iv) {
  * @param salt Salt for HmacSHA sum of password.
  * @returns {Object} JSON object containing parameters.
  */
-ZyncUtil.getAlgoPBKDF2 = function(salt) {
+ZyncUtil.getAlgoPBKDF2 = function (salt) {
 	return {
 		name: "PBKDF2",
 		hash: "SHA-256",
@@ -42,6 +42,21 @@ ZyncUtil.getRandomValues = function (length) {
 	
 	return crypto.getRandomValues(new Uint8Array(length));
 }
+
+ZyncUtil.sendNotification = function (type, message) {
+	if (["info", "warning", "error"].indexOf(type) == -1) {
+		throw "Invalid notification type! 'info', 'warning' or 'error'";
+	}
+	
+	chrome.runtime.sendMessage({
+		purpose: "notification",
+		type: type,
+		message: message
+	});
+}
+
+
+
 
 ZyncUtil.storageGetAll = function(prefix, callback) {
 	chrome.storage.local.get(null, result => {
