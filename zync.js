@@ -164,7 +164,6 @@ function zyncCopyHandler() {
         helper.style.position = "absolute";
         helper.style.border = "none";
         document.body.appendChild(helper);
-        console.log("Recreated");
     } else {
         helper.value = "";
     }
@@ -201,4 +200,4 @@ function zyncCopyHandler() {
     console.log("Copy listener: " + data);
 }
 
-setInterval(zyncCopyHandler, 200);
+setInterval(zyncCopyHandler, 500);
