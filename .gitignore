@@ -30,9 +30,6 @@ Desktop.ini
 $RECYCLE.BIN/
 
 ## Linux
-.*
-!.gitattributes
-!.gitignore
 *~
 ## Bower
 node_components/
