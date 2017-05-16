@@ -18,6 +18,8 @@ ZyncUtil.storageGetAll = function(prefix, callback) {
 			callback(all);
 		}
 	});
+}
+
 ZyncUtil.getAsset = function(path) {
 	return chrome.runtime.getUrl("/assets/" + path);
 }
