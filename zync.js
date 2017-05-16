@@ -150,14 +150,13 @@ Zync.decrypt = function (data, salt, iv, password) {
 
 window.Zync = window.Zync || Zync;
 
+let helper = null;
+let helperdiv = null;
+
 function zyncCopyHandler() {
 
 
     let bg = chrome.extension.getBackgroundPage();
-
-
-    let helper = null;
-    let helperdiv = null;
 
     if (helper === null || helper === undefined) {
         helper = bg.document.createElement("textarea");
@@ -165,6 +164,7 @@ function zyncCopyHandler() {
         helper.style.position = "absolute";
         helper.style.border = "none";
         document.body.appendChild(helper);
+        console.log("Recreated");
     } else {
         helper.value = "";
     }
