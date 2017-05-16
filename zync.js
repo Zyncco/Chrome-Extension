@@ -2,7 +2,7 @@ var a_table = "00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E
 var b_table = a_table.split(' ').map(function (s) {
     return parseInt(s, 16)
 });
-
+let last = "";
 
 const Zync = {};
 
@@ -18,8 +18,9 @@ function hash(data) {
  * Generates random values to be used as IV and hash.
  * @returns {*}
  */
-function generateRand() {
-    return window.crypto.getRandomValues(new Uint8Array(16));
+function generateRand(len) {
+    if (len === undefined) len = 16;
+    return window.crypto.getRandomValues(new Uint8Array(len));
 }
 
 function str2ab(str) {
@@ -31,29 +32,59 @@ function str2ab(str) {
     return buf;
 }
 
+function ab2str(buf) {
+    return String.fromCharCode.apply(null, new Uint16Array(buf));
+}
 
-Zync.encrypt = function (password) {
+Zync.encrypt = function (password, data) {
+    let buf = str2ab(data);
+
+
     return new Promise(
         function (resolve, reject) {
 
             let pbkdfAlgo = {
                 name: "PBKDF2",
-                hash: "SHA-1",
-                salt: generateRand(),
-                iterations: 20
+                hash: "SHA-256",
+                salt: generateRand(25),
+                iterations: 10000 // https://cryptosense.com/parameter-choice-for-pbkdf2/
             };
 
             let keyGenAlgo = {
                 name: "AES-GCM",
                 length: 256
             };
+
+            let encryptAlgo = {
+                name: "AES-GCM",
+                tagLength: 128,
+                iv: generateRand(16),
+
+            };
             // Import the password as a CryptoKey. This step is necessary to actually generate the encrypting key.
             window.crypto.subtle.importKey("raw", str2ab(password), {name: "PBKDF2"}, false, ["deriveKey"])
                 .then(function (cryptoKey) {
                     // Create a key based on the master key above.
-                    window.crypto.subtle.deriveKey(pbkdfAlgo, cryptoKey, keyGenAlgo, true, ["Encrypt"])
+                    window.crypto.subtle.deriveKey(pbkdfAlgo, cryptoKey, keyGenAlgo, true, ["encrypt", "decrypt"])
                         .then(function (finalKey) {
+                            window.crypto.subtle.encrypt(encryptAlgo, finalKey, buf)
+                                .then(function (encrypted) {
+                                    let payload = {};
+                                    payload.timestamp = Date.now();
+                                    payload.hash = {};
+                                    payload.hash.crc32 = hash(data);
+                                    payload.encryption = {};
+                                    payload.encryption.type = "AES256-GCM-NOPADDING";
+                                    payload.encryption.iv = encryptAlgo.iv;
+                                    payload.encryption.salt = pbkdfAlgo.salt;
+                                    payload.payload = encrypted;
+                                    payload["payload-type"] = "TEXT";
 
+                                    resolve(payload);
+                                }).catch(function (err) {
+                                    reject(err);
+                                }
+                            );
                         }).catch(function (err) {
                             reject(err);
                         }
@@ -65,10 +96,60 @@ Zync.encrypt = function (password) {
         })
 };
 
+Zync.decrypt = function (data, salt, iv, password) {
+    let buf = str2ab(data);
+
+    return new Promise(
+        function (resolve, reject) {
+
+            let pbkdfAlgo = {
+                name: "PBKDF2",
+                hash: "SHA-256",
+                salt: salt,
+                iterations: 10000 // https://cryptosense.com/parameter-choice-for-pbkdf2/
+            };
+
+            let keyGenAlgo = {
+                name: "AES-GCM",
+                length: 256
+            };
+
+            let decryptAlgo = {
+                name: "AES-GCM",
+                tagLength: 128,
+                iv: iv,
+
+            };
+            // Import the password as a CryptoKey. This step is necessary to actually generate the encrypting key.
+            window.crypto.subtle.importKey("raw", str2ab(password), {name: "PBKDF2"}, false, ["deriveKey"])
+                .then(function (cryptoKey) {
+                    // Create a key based on the master key above.
+                    window.crypto.subtle.deriveKey(pbkdfAlgo, cryptoKey, keyGenAlgo, true, ["encrypt", "decrypt"])
+                        .then(function (finalKey) {
+                            window.crypto.subtle.decrypt(decryptAlgo, finalKey, data)
+                                .then(function (decrypted) {
+                                    console.log(ab2str(decrypted));
+                                    resolve(ab2str(decrypted));
+                                }).catch(function (err) {
+                                    reject(err);
+                                }
+                            );
+                        }).catch(function (err) {
+                            reject(err);
+                        }
+                    );
+                }).catch(function (err) {
+                    reject(err);
+                }
+            );
+        })
+};
 
 window.Zync = window.Zync || Zync;
 
 function zyncCopyHandler() {
+
+
     var bg = chrome.extension.getBackgroundPage();
 
 
@@ -95,7 +176,19 @@ function zyncCopyHandler() {
     bg.document.execCommand("Paste");
 
     var data = helper.value;
+    if (data === last) {
+        return;
+    }
+    last = data;
 
+    Zync.encrypt("abcdef", data)
+        .then(function (result) {
+            console.log(result);
+            Zync.decrypt(result.payload, result.encryption.salt, result.encryption.iv, "abcdef");
+        }).catch(function (err) {
+            console.log(err);
+        }
+    );
     console.log("Copy listener: " + data);
 }
 
