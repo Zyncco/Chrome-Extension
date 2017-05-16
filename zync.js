@@ -72,12 +72,7 @@ Zync.encode = function(data) {
 }
 
 /**
- * Upload Step 4: Hash the encrypted data.
- */
-Zync.hash = function() {}
-
-/**
- * Upload Step 5: Upload the encrypted data and the necessary metadata.
+ * Upload Step 4: Upload the encrypted data and the necessary metadata.
  */
 Zync.upload = function() {}
 
