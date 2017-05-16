@@ -3,7 +3,7 @@ let b_table = a_table.split(' ').map(function (s) {
     return parseInt(s, 16)
 });
 let last = "";
-let crypto = window.crypto;
+//let crypto = window.crypto;
 
 const Zync = {};
 
