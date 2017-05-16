@@ -1,43 +1,45 @@
 function handleError() {
-	if (chrome.runtime.lastError) {
-		// TODO: Properly display error to user
-		console.error(chrome.runtime.lastError.message);
-	}
+    if (chrome.runtime.lastError) {
+        // TODO: Properly display error to user
+        console.error(chrome.runtime.lastError.message);
+    }
 }
 
 function initializeConfig(clear) {
-	if (clear) {
-		chrome.storage.local.clear(handleError);
-	}
-	
-	chrome.storage.local.set({
-		"initialized": new Date().getTime(),
+    if (clear) {
+        chrome.storage.local.clear(handleError);
+    }
 
-		/* REST API URL */
-		"api.url.scheme": "https",
-		"api.url.domain": "beta-api.zync.co",
-		"api.url.version": 0,
-		"api.url.format": "{scheme}://{domain}/v{version}/{endpoint}",
+    chrome.storage.local.set({
+        /* Epoch of initialization */
+        "initialized": parseInt(new Date().getTime() / 1000),
 
-		/* REST API Auth */
-		"api.auth.header": "X-ZYNC-TOKEN",
-		"api.auth.token": null,
+        /* REST API URL */
+        "api.url.scheme": "https",
+        "api.url.domain": "beta-api.zync.co",
+        "api.url.version": 0,
+        "api.url.format": "{scheme}://{domain}/v{version}/{endpoint}",
 
-		/* Encryption */
-		"encryption.password": null,
+        /* REST API Auth */
+        "api.auth.header": "X-ZYNC-TOKEN",
+        "api.auth.token": null,
 
-		/* Firebase */
-		"firebase.apiKey": "AIzaSyAp1jrV5OQn9yG-EScMWes827_EvpcQE68",
-		"firebase.authDomain": "zyncco-f9dd0.firebaseapp.com",
-		"firebase.messagingSenderId": "958433754089",
+        /* Encryption */
+        "encryption.password": null,
 
-		/* History */
-		"history": []
-	}, handleError);
+        /* Firebase */
+        "firebase.apiKey": "AIzaSyAp1jrV5OQn9yG-EScMWes827_EvpcQE68",
+        "firebase.authDomain": "zyncco-f9dd0.firebaseapp.com",
+        "firebase.messagingSenderId": "958433754089",
+
+        /* History */
+        "history": []
+    }, handleError);
 }
 
-chrome.storage.local.getBytesInUse(null, result => {
-	if (result === 0) {
-		initializeConfig();
-	}
+
+chrome.storage.local.getBytesInUse(null, function (result) {
+    if (result === 0) {
+        initializeConfig();
+    }
 });

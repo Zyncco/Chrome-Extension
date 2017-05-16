@@ -41,8 +41,21 @@
 
 	// https://developer.chrome.com/extensions/declare_permissions
 	"permissions": [
+		"background",
+		"contextMenus",
+		"clipboardRead",
+		"clipboardWrite",
 		"storage"
 	],
-
+	"content_scripts": [
+		{
+			"matches": [
+				"http://*/*"
+			],
+			"js": [
+				"zync.js"
+			]
+		}
+    ],
 	"optional_permissions": []
 }
