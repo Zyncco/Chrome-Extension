@@ -109,7 +109,7 @@ Zync.encrypt = function (password, data) {
                 .then(function (pwd) {
                     crypto.subtle.encrypt(encryptAlgo, pwd.key, buf)
                         .then(function (encrypted) {
-                            let payload = preparePayload(pwd.salt, encryptAlgo.iv, encrypted, hash(data));
+                            let payload = preparePayload(pwd.salt, encryptAlgo.iv, encrypted, hash(encrypted));
                             resolve(payload);
                         }).catch(function (err) {
                             reject(err);
