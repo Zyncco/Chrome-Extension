@@ -2,7 +2,7 @@ const CLIPBOARD_CURRENT = document.getElementById("clipboard-current");
 const CLIPBOARD_PREVIOUS = document.getElementById("clipboard-previous");
 const PATTERN_IGNORE = new RegExp("^<!--StartFragment-->.*<!--EndFragment-->$", "im");
 
-CLIPBOARD_CURRENT.addEventListener("paste", function(event) {
+function pasteHandler(event) {
 	event.stopPropagation();
 	event.preventDefault();
 	
@@ -10,26 +10,30 @@ CLIPBOARD_CURRENT.addEventListener("paste", function(event) {
 	let data = [];
 	
 	for (let i = 0; i < items.length; i++) {
-		let item = items[0];
+		let item = items[i];
 		
-		if (item.kind == "file") {
+		if (item.kind === "file") {
 			data.push(item.getAsFile());
 		} else {
-			item.getAsString(function(result) {
-				if (!PATTERN_IGNORE.test(result)) {
-					data.push(result);
-				}
-			});
+			console.log("item is string");
 		}
 	}
 	
 	if (data.length == 0) {
-		console.log("empty");
-		return;
+		console.log("data is empty");
+	} else {
+		console.log(data);
 	}
-	
-	console.log(data)
-});
+}
 
-CLIPBOARD_CURRENT.select();
-document.execCommand('paste');
+function initializeBackground() {
+	CLIPBOARD_CURRENT.addEventListener("paste", pasteHandler)
+}
+
+if (Zync.isSignedIn()) {
+	initializeBackground();
+} else {
+	chrome.tabs.create({
+		url: "/window/signin.html"
+	});
+}

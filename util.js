@@ -18,6 +18,19 @@ ZyncUtil.sendNotification = function (type, message) {
 	});
 }
 
+/**
+ * Redirect error to a notification. If 'err' is not passed, checks
+ * the last error Chrome threw.
+ *
+ * @param err Optional exception thrown (Promise.catch).
+ */
+ZyncUtil.handleCallbackError = function (err) {
+	if (err) {
+		ZyncUtil.sendNotification("error", err);;
+	} else if (chrome.runtime.lastError) {
+		ZyncUtil.sendNotification("error", chrome.runtime.lastError.message);
+	}
+}
 
 
 

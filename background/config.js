@@ -1,10 +1,3 @@
-function handleError() {
-    if (chrome.runtime.lastError) {
-        // TODO: Properly display error to user
-        console.error(chrome.runtime.lastError.message);
-    }
-}
-
 function initializeConfig(clear) {
     if (clear) {
         chrome.storage.local.clear(handleError);
@@ -34,9 +27,8 @@ function initializeConfig(clear) {
 
         /* History */
         "history": []
-    }, handleError);
+    }, ZyncUtil.handleCallbackError);  // Might not need an Util function for this
 }
-
 
 chrome.storage.local.getBytesInUse(null, function (result) {
     if (result === 0) {
