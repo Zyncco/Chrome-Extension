@@ -13,49 +13,40 @@
 	"incognito": "not_allowed",
 	"minimum_chrome_version": "42",
 	"offline_enabled": false,
-
-	"browser_action":
+	
+	"key": "gonkkepdmdkopdeapomlcleddingnbgl",
+	
+	"background":
 	{
-		"default_title": "Zyncco",
-		"default_popup": "/popup/index.html"
-	},
-
-
-
-
-
-	// https://developer.chrome.com/extensions/background_pages
-	"background": {
 		"page": "/background/index.html",
 		"persistent": true
 	},
 
-	// https://developer.chrome.com/extensions/content_scripts
-	// "content_scripts": {},
+	"browser_action":
+	{
+		"default_popup": "/popup/index.html",
+		"default_title": "Zyncco"
+	},
+	
+	"content_scripts":
+	[
+		{
+			"matches": [ "chrome-extension://gonkkepdmdkopdeapomlcleddingnbgl/*" ],
+			"js": [ "util.js" ]
+		}
+	],
 
-	// https://developer.chrome.com/extensions/optionsV2
-	// "options_ui": {},
+	"options_ui":
+	{
+		"chrome_ui": true,
+		"page": "/window/options.html"
+	},
 
-	// https://developer.chrome.com/extensions/commands
-	"commands": {},
-
-	// https://developer.chrome.com/extensions/declare_permissions
 	"permissions": [
 		"background",
 		"contextMenus",
 		"clipboardRead",
 		"clipboardWrite",
 		"storage"
-	],
-	"content_scripts": [
-		{
-			"matches": [
-				"http://*/*"
-			],
-			"js": [
-				"zync.js"
-			]
-		}
-    ],
-	"optional_permissions": []
+	]
 }

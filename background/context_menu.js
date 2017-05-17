@@ -1,3 +1,5 @@
+const ID_UPLOAD = "zync-upload";
+
 chrome.contextMenus.create({
 	type: "normal",
 	id: "zync-upload",
