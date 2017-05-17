@@ -7,6 +7,9 @@ let last = "";
 
 const Zync = {};
 
+const encoder =  new TextEncoder();
+const decoder = new TextDecoder();
+
 // Creates a CRC32 checksum
 function hash(data) {
     let crc = -1;
@@ -22,19 +25,6 @@ function hash(data) {
 function generateRand(len) {
     if (len === undefined) len = 16;
     return crypto.getRandomValues(new Uint8Array(len));
-}
-
-function str2ab(str) {
-    let buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-    let bufView = new Uint16Array(buf);
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-    return buf;
-}
-
-function ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint16Array(buf));
 }
 
 /**
@@ -60,7 +50,7 @@ function genKey(password, salt) {
             };
 
             // Import the key as a CryptoKey to use as a master key.
-            crypto.subtle.importKey("raw", str2ab(password), {name: "PBKDF2"}, false, ["deriveKey"])
+            crypto.subtle.importKey("raw", encoder.encode(password), {name: "PBKDF2"}, false, ["deriveKey"])
                 .then(function (cryptoKey) {
                     // Create a key based on the master key above.
                     crypto.subtle.deriveKey(pbkdfAlgo, cryptoKey, keyGenAlgo, true, ["encrypt", "decrypt"])
@@ -97,7 +87,7 @@ function preparePayload(salt, iv, encrypted, hash) {
 }
 
 Zync.encrypt = function (password, data) {
-    let buf = str2ab(data);
+    let buf = encoder.encode(data);
     return new Promise(
         function (resolve, reject) {
             let encryptAlgo = {
@@ -136,7 +126,7 @@ Zync.decrypt = function (data, salt, iv, password) {
                 .then(function (pwd) {
                     crypto.subtle.decrypt(decryptAlgo, pwd.key, data)
                         .then(function (decrypted) {
-                            resolve(ab2str(decrypted));
+                            resolve(decoder.decode(decrypted));
                         }).catch(function (err) {
                             reject(err);
                         }
