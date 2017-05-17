@@ -10,7 +10,7 @@
 	"description": "End-to-end encrypted cloud clipboard synchronization.",
 	"icons": {},
 
-	"incognito": "not_allowed",
+	// "incognito": "not_allowed",
 	"minimum_chrome_version": "42",
 	"offline_enabled": false,
 	
@@ -27,18 +27,10 @@
 		"default_popup": "/popup/index.html",
 		"default_title": "Zyncco"
 	},
-	
-	"content_scripts":
-	[
-		{
-			"matches": [ "<all_urls>" ],
-			"js": [ "util.js" ]
-		}
-	],
 
 	"options_ui":
 	{
-		"chrome_ui": true,
+		"chrome_style": true,
 		"page": "/window/options.html"
 	},
 
