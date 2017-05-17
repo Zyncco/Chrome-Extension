@@ -11,13 +11,13 @@ let signedIn = null;
  * @param iv Initialisation Value for AES encryption.
  * @returns {Object} JSON object containing parameters.
  */
-ZyncUtil.getAlgoAESGCM = function (iv) {
+Zync.getAlgoAESGCM = function (iv) {
 	return {
 		name: "AES-GCM",
 		tagLength: 128,
 		iv: iv
 	};
-}
+};
 
 /**
  * Get the algorithm paraneters for PBKDF2.
@@ -25,14 +25,14 @@ ZyncUtil.getAlgoAESGCM = function (iv) {
  * @param salt Salt for HmacSHA sum of password.
  * @returns {Object} JSON object containing parameters.
  */
-ZyncUtil.getAlgoPBKDF2 = function (salt) {
+Zync.getAlgoPBKDF2 = function (salt) {
 	return {
 		name: "PBKDF2",
 		hash: "SHA-256",
 		iterations: 10000,
 		salt: salt
 	};
-}
+};
 
 /**
  * Get random values using Web Extensions Crypto.
@@ -40,20 +40,20 @@ ZyncUtil.getAlgoPBKDF2 = function (salt) {
  * @param length Length of Uint8Array containing random values. Default: 16
  * @returns {Uint8Array} Array of random values to be used as-is.
  */
-ZyncUtil.getRandomValues = function (length) {
+Zync.getRandomValues = function (length) {
 	if (typeof length !== "number") {
 		length = 16;
 	}
 	
 	return crypto.getRandomValues(new Uint8Array(length));
-}
+};
 
 /**
  * Check if extension is "signed in" to Zync.
  */
 Zync.isSignedIn = function () {
 	return false;
-}
+};
 
 /**
  * Get AES-GCM encryption key for encryption / decryption based on type.
@@ -70,7 +70,7 @@ Zync.getEncryptionKey = function (type, password, salt) {
 	
 	if (type === "encrypt") {
 		if (salt == null) {
-			salt = ZyncUtil.getRandomValues(25);
+			salt = Zync.getRandomValues(25);
 		}
 	} else if (type === "decrypt") {
 		if (salt == null || iv == null) {
@@ -81,7 +81,7 @@ Zync.getEncryptionKey = function (type, password, salt) {
 	}
 	
 	return new Promise(function (resolve, reject) {
-		let PBKDF2 = ZyncUtil.getAlgoPBKDF2(salt);
+		let PBKDF2 = Zync.getAlgoPBKDF2(salt);
 		let AES_GCM = {
 			name: "AES-GCM",
 			length: 256
@@ -93,21 +93,21 @@ Zync.getEncryptionKey = function (type, password, salt) {
 			}).then(function (key) {
 				resolve({
 					key: key,
-					salt: salt;
+					salt: salt
 				});
 			}).catch(reject);
 	});
-}
+};
 
 /**
  * Upload Step 1: Deflate the input data.
  */
-Zync.deflate = function () {}
+Zync.deflate = function () {};
 
 /**
  * Upload Step 2: Encrypt the deflated data.
  */
-Zync.encrypt = function () {}
+Zync.encrypt = function () {};
 
 /**
  * Upload Step 3: Encode the encrypted data.
@@ -117,18 +117,18 @@ Zync.encrypt = function () {}
  */
 Zync.encode = function (data) {
 	return btoa(String.fromCharCode.apply(null, data));
-}
+};
 
 /**
  * Upload Step 4: Upload the encrypted data and the necessary metadata.
  */
-Zync.upload = function () {}
+Zync.upload = function () {};
 
 /**
  * Download Step 1: Download the encrypted data and the necessary metadata.
  * Download Step 1b: Verify the downloaded data.
  */
- Zync.download = function () {}
+Zync.download = function () {};
 
 /**
  * Download Step 2: Decode the downloaded data.
@@ -138,14 +138,18 @@ Zync.upload = function () {}
  */
 Zync.decode = function (data) {
 	return atob(data);
-}
+};
  
  /**
  * Download Step 3: Decrypt the decoded data.
  */
-Zync.decrypt = function () {}
+Zync.decrypt = function () {};
 
 /**
  * Download Step 4: Inflate the decrypted data.
  */
-Zync.inflate = function () {}
+Zync.inflate = function () {};
+
+// ---
+
+window.Zync = window.Zync || Zync;
