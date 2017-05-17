@@ -3,22 +3,25 @@ const CLIPBOARD_PREVIOUS = document.getElementById("clipboard-previous");
 const PATTERN_IGNORE = new RegExp("^<!--StartFragment-->.*<!--EndFragment-->$", "im");
 
 function pasteHandler(event) {
-	event.stopPropagation();
-	event.preventDefault();
-	
 	let items = (event.clipboardData || event.originalEvent.clipboardData).items;
 	let data = [];
-	
+
 	for (let i = 0; i < items.length; i++) {
 		let item = items[i];
-		
+
 		if (item.kind === "file") {
 			data.push(item.getAsFile());
 		} else {
 			console.log("item is string");
+			
+			item.getAsString(result => {
+				if (PATTERN_IGNORE.test(result)) {
+					console.log("dirty html!");
+				}
+			});
 		}
 	}
-	
+
 	if (data.length == 0) {
 		console.log("data is empty");
 	} else {
