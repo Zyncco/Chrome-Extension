@@ -31,4 +31,8 @@ function handleSignin(provider) {
 	});
 }
 
-handleSignin("google");
+// handleSignin("google");
+
+document.getElementById("signin-google").addEventListener("click", function() {
+	console.log(chrome.extension.getBackgroundPage());
+});
