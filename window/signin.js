@@ -16,9 +16,9 @@ firebase.initializeApp({
  */
 function handleSignin(provider) {
 	document.getElementById("signin-" + provider).addEventListener('click', function() {
-		let provider = PROVIDERS[provider];
+		provider = new PROVIDERS[provider]();
 		
-		firebase.auth().signInWithPoup(provider)
+		firebase.auth().signInWithPopup(provider)
 			.then(function (result) {
 				return result.user.getToken();
 			}).then(function (token) {
@@ -30,3 +30,5 @@ function handleSignin(provider) {
 			}).catch(ZyncUtil.handleCallbackError);
 	});
 }
+
+handleSignin("google");
