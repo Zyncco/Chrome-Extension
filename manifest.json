@@ -5,7 +5,11 @@
   "author": "Zyncco <support@zync.co>",
   "homepage_url": "https://zync.co",
   "description": "End-to-end encrypted cloud clipboard synchronization.",
-  "icons": {},
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "browser_action": {
     "default_title": "Zyncco",
     "default_popup": "/popup/index.html"

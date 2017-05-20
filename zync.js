@@ -34,7 +34,7 @@ function generateRand(len) {
  */
 function genKey(password, salt) {
     if (salt === undefined) {
-        salt = generateRand(25)
+        salt = generateRand(25);
     }
     return new Promise(
         function (resolve, reject) {
