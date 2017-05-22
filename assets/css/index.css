@@ -1,5 +1,30 @@
+.zync-toolbar {
+    height: 56px;
+    width: 100%;
+    background-color: #488CFF;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.zync-toolbar .toolbar-brand {
+    font-size: 20px;
+    flex: 1;
+}
+
+.zync-toolbar .toolbar-actions a {
+    color: #FFF;
+    text-decoration: none;
+}
+
+.zync-toolbar .toolbar-actions i {
+    vertical-align: middle;
+}
+
 .zync-activator-container {
-    height: 100%;
+    height: calc(100% - 56px);
     width: 100%;
     display: flex;
     align-items: center;
@@ -32,15 +57,14 @@
     left: 0;
     right: 0;
     bottom: 0;
+    opacity: 0.5;
 }
 
 .zync-activator.active:before {
-    opacity: 0.5;
     animation: breathe 3s ease-in-out infinite;
 }
 
 .zync-activator.active:after {
-    opacity: 0.3;
     animation: breathe 6s ease-in-out infinite;
 }
 
