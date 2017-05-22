@@ -1,0 +1,61 @@
+.zync-activator-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zync-activator {
+    max-width: 200px;
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.zync-activator img {
+    display: block;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.zync-activator:before,.zync-activator:after {
+    background-color: #488CFF;
+    border-radius: 100%;
+    width: 100%;
+    height: 100%;
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.zync-activator.active:before {
+    opacity: 0.5;
+    animation: breathe 3s ease-in-out infinite;
+}
+
+.zync-activator.active:after {
+    opacity: 0.3;
+    animation: breathe 6s ease-in-out infinite;
+}
+
+.zync-activator:not(.active) img {
+    filter: grayscale(1);
+}
+
+@keyframes breathe {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
