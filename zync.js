@@ -24,6 +24,8 @@ const decoder = new TextDecoder("utf-8");
  return (crc ^ (-1)) >>> 0;
  }*/
 
+
+
 /**
  * Generates random values to be used as IV and hash.
  * @returns {*}

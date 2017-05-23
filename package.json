@@ -6,10 +6,11 @@
   "author": "Zync <support@zync.co>",
   "license": "TBD",
   "dependencies": {
+    "fetch-api": "^0.0.2",
     "firebase": "^4.0.0",
-    "pako": "^1.0.5"
+    "pako": "^1.0.5",
+    "typescript": "^2.3.3"
   },
   "devDependencies": {
-    "typescript": "^2.3.3"
   }
 }
