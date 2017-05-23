@@ -112,7 +112,7 @@ Zync.encrypt = function (password, data) {
     // These bytes define the CRC32 hash. We don't need to do CRC32 multiple times.
     payload.crc32 = intFromBytes(payload.data.slice(-8, -4).reverse());
 
-    let buf = encoder.encode(data);
+    let buf = encoder.encode(JSON.stringify(payload));
     return new Promise(
         function (resolve, reject) {
             let encryptAlgo = {
