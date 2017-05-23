@@ -24,6 +24,7 @@
   "background": {
     "persistent": true,
     "scripts": [
+      "node_modules/pako/dist/pako.js",
       "zync.js"
     ]
   },
