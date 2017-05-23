@@ -4,7 +4,7 @@
  }); */
 
 let last = "";
-//let crypto = window.crypto;
+let crypto = window.subtleCrypto;
 
 const Zync = {};
 
