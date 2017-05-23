@@ -25,6 +25,7 @@
     "persistent": true,
     "scripts": [
       "node_modules/pako/dist/pako.js",
+      "credential.js",
       "zync.js"
     ]
   },
