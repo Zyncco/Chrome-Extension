@@ -29,7 +29,8 @@ function generateRand(len) {
 
 /**
  * Generates a key
- * @param password
+ * @param password Password of the user
+ * @param salt Generated salt
  * @returns {Promise} A promise of a data object with the key and salt.
  */
 function genKey(password, salt) {
