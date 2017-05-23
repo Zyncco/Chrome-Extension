@@ -11,6 +11,5 @@
     "pako": "^1.0.5",
     "typescript": "^2.3.3"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
