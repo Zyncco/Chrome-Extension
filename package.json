@@ -1,0 +1,12 @@
+{
+  "name": "Zyncco",
+  "version": "1.0.0",
+  "description": "End-to-end encrypted cloud clipboard synchornization",
+  "repository": "https://github.com/Zyncco/Chrome-Extension.git",
+  "author": "Zync <support@zync.co>",
+  "license": "TBD",
+  "dependencies": {
+    "firebase": "^4.0.0",
+    "pako": "^1.0.5"
+  }
+}
