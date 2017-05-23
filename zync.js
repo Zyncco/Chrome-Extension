@@ -62,11 +62,9 @@ function genKey(password, salt) {
         });
 }
 
-function preparePayload(salt, iv, encrypted, hash) {
+function preparePayload(salt, iv, encrypted) {
     let payload = {};
     payload.timestamp = Date.now();
-    payload.hash = {};
-    payload.hash.crc32 = hash;
     payload.encryption = {};
     payload.encryption.type = "AES256-GCM-NOPADDING";
     payload.encryption.iv = iv;
@@ -90,7 +88,7 @@ Zync.encrypt = function (password, data) {
                 .then(function (pwd) {
                     crypto.subtle.encrypt(encryptAlgo, pwd.key, buf)
                         .then(function (encrypted) {
-                            let payload = preparePayload(pwd.salt, encryptAlgo.iv, encrypted, hash(encrypted));
+                            let payload = preparePayload(pwd.salt, encryptAlgo.iv, encrypted);
                             resolve(payload);
                         }).catch(function (err) {
                             reject(err);
