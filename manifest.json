@@ -1,67 +1,44 @@
 {
 	"manifest_version": 2,
 
-	"name": "Zync",
+	"name": "Zyncco",
 	"version": "1.0.0",
-	// https://en.wikipedia.org/wiki/Category:Zinc_compounds
 	"version_name": "Zync Arsenide",
-	"author": "Zync <support@zync.co>",
+	"author": "Zyncco <support@zync.co>",
 	"homepage_url": "https://zync.co",
 
-	"default_locale": "en",
-	"description": "__MSG_extension_description__",
-	"icons": {
-		"16": "/assets/logo/16x.png",
-		"24": "/assets/logo/24x.png",
-		"32": "/assets/logo/32x.png",
-		"48": "/assets/logo/48x.png",
-		"128": "/assets/logo/128x.png",
-		"256": "/assets/logo/256x.png"
+	"description": "End-to-end encrypted cloud clipboard synchronization.",
+	"icons": {},
+
+	// "incognito": "not_allowed",
+	"minimum_chrome_version": "42",
+	"offline_enabled": false,
+	
+	"key": "gonkkepdmdkopdeapomlcleddingnbgl",
+	
+	"background":
+	{
+		"page": "/background/index.html",
+		"persistent": true
 	},
 
-	// https://developer.chrome.com/extensions/manifest/incognito
-	"incognito": "not_allowed",
-	// https://developer.chrome.com/extensions/manifest/minimum_chrome_version
-	// "minimum_chrome_version": "42",
-	// https://developer.chrome.com/extensions/manifest/offline_enabled
-	"offline_enabled": false,
-
-	// https://developer.chrome.com/extensions/browserAction
 	"browser_action":
 	{
-		"default_title": "Zync",
-		"default_popup": "/popup/index.html"
+		"default_popup": "/popup/index.html",
+		"default_title": "Zyncco"
 	},
 
-	// https://developer.chrome.com/extensions/background_pages
-	"background": {
-		"page": "/background/index.html"
+	"options_ui":
+	{
+		"chrome_style": true,
+		"page": "/window/options.html"
 	},
 
-	// https://developer.chrome.com/extensions/content_scripts
-	// "content_scripts": {},
-
-	// https://developer.chrome.com/extensions/optionsV2
-	"options_ui": {
-		"page": "/options/index.html"
-	},
-
-	// https://developer.chrome.com/extensions/commands
-	"commands": {},
-
-	// https://developer.chrome.com/extensions/declare_permissions
 	"permissions": [
-		"alarms",
 		"background",
+		"contextMenus",
 		"clipboardRead",
 		"clipboardWrite",
-		"contextMenus",
-		"notifications",
-		"storage",
-		"tabs"
-	],
-
-	"optional_permissions": [],
-
-	"content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
+		"storage"
+	]
 }

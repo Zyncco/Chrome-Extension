@@ -1,9 +1,25 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<style>
+#clipboard-data
+{
+	height: 300px;
+	width: 500px;
+
+	padding: 2px;
+
+	border: 1px solid black;
+}
+		</style>
 	</head>
 	<body>
-		<script src="/zync.js"></script>
-		<script src="index.js"></script>
+		<textarea id="clipboard-current"></textarea>
+		<textarea id="clipboard-previous"></textarea>
+
+		<script src="config.js"></script>
+		<script src="zync.js"></script>
+		<script src="background.js"></script>
+		<script src="context_menu.js"></script>
 	</body>
 </html>

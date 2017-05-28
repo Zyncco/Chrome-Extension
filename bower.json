@@ -1,5 +1,5 @@
 {
-  "name": "zync",
+  "name": "Zync",
   "homepage": "https://zync.co",
   "authors": [
     "Zync <support@zync.co>"
@@ -19,7 +19,7 @@
     "*"
   ],
   "dependencies": {
-    "pako": "^1.0.4",
-    "firebase": "^3.7.3"
+    "pako": "^1.0.5",
+    "firebase": "^3.8.0"
   }
 }

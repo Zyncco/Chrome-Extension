@@ -1,80 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<!-- meta http-equiv="refresh" content="1" -->
-
-		<style>
-*
-{
-	margin: 0;
-	padding: 0;
-}
-
-body
-{
-	background-color: #4A8CFD;
-}
-
-#container
-{
-	padding: 10px;
-
-	position: absolute;
-	top: 50%;
-	left: 50%;
-
-	transform: translate(-50%, -50%);
-}
-
-#container > *
-{
-	margin: 5px;
-}
-
-#container > img
-{}
-
-#container > .signin-button
-{
-	margin: 0 auto;
-	cursor: pointer;
-}
-
-#container > .disabled
-{
-	cursor: default;
-}
-
-#signin-google
-{
-	height: 49px;
-	width: 191px;
-
-	background-image: url("/assets/signin/google/light.png");
-}
-
-#signin-google:focus,
-#signin-google:hover
-{
-	background-image: url("/assets/signin/google/light-focus.png");
-}
-
-#signin-google:active
-{
-	background-image: url("/assets/signin/google/light-active.png");
-}
-		</style>
+		<meta charset="utf-8" />
+		
+		<title>Zyncco - Sign In</title>
+		
+		<link rel="stylesheet" type="text/css" href="window.css" />
 	</head>
 	<body>
 		<div id="container">
 			<img src="/assets/logo.svg" />
-
+			
 			<div class="signin-button" id="signin-google"></div>
 		</div>
-
+	
 		<script src="/bower_components/firebase/firebase-app.js"></script>
 		<script src="/bower_components/firebase/firebase-auth.js"></script>
-		<script src="/bower_components/firebase/firebase-messaging.js"></script>
 		<script src="signin.js"></script>
 	</body>
 </html>
