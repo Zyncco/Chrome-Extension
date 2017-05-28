@@ -30,9 +30,3 @@ function handleSignin(provider) {
 			}).catch(ZyncUtil.handleCallbackError);
 	});
 }
-
-// handleSignin("google");
-
-document.getElementById("signin-google").addEventListener("click", function() {
-	console.log(chrome.extension.getBackgroundPage());
-});
