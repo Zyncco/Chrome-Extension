@@ -9,6 +9,7 @@ let crypto = window.subtleCrypto;
 const Zync = {};
 
 const encoder = new TextEncoder("utf-8");
+
 const decoder = new TextDecoder("utf-8");
 
 /**
@@ -24,7 +25,7 @@ const decoder = new TextDecoder("utf-8");
  return (crc ^ (-1)) >>> 0;
  }*/
 
-f
+
 /**
  * Generates random values to be used as IV and hash.
  * @returns {*}
