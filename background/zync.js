@@ -44,7 +44,7 @@ Zync.getRandomValues = function (length) {
 	if (typeof length !== "number") {
 		length = 16;
 	}
-	
+
 	return crypto.getRandomValues(new Uint8Array(length));
 };
 
@@ -67,7 +67,7 @@ Zync.getEncryptionKey = function (type, password, salt) {
 	if (password == null || password === "") {
 		throw "You must provide a password!";
 	}
-	
+
 	if (type === "encrypt") {
 		if (salt == null) {
 			salt = Zync.getRandomValues(25);
@@ -79,14 +79,14 @@ Zync.getEncryptionKey = function (type, password, salt) {
 	} else {
 		throw "Invalid encryption key type! Must be 'encrypt' or 'decrypt'.";
 	}
-	
+
 	return new Promise(function (resolve, reject) {
 		let PBKDF2 = Zync.getAlgoPBKDF2(salt);
 		let AES_GCM = {
 			name: "AES-GCM",
 			length: 256
 		};
-		
+
 		crypto.subtle.importKey("raw", ENCODER.encode(password), "PBKDF2", false, ["deriveKey"])
 			.then(function (key) {
 				return crypto.subtle.deriveKey(PBKDF2, key, AES_GCM, true, [type]);
@@ -139,7 +139,7 @@ Zync.download = function () {};
 Zync.decode = function (data) {
 	return atob(data);
 };
- 
+
  /**
  * Download Step 3: Decrypt the decoded data.
  */

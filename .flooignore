@@ -80,3 +80,5 @@ $RECYCLE.BIN/
 node_components/
 bower_components/
 node_modules/
+
+!node_modules/@types/text-encoding/index.d.ts
