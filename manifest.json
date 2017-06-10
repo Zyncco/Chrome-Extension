@@ -1,44 +1,42 @@
 {
-	"manifest_version": 2,
-
-	"name": "Zyncco",
-	"version": "1.0.0",
-	"version_name": "Zync Arsenide",
-	"author": "Zyncco <support@zync.co>",
-	"homepage_url": "https://zync.co",
-
-	"description": "End-to-end encrypted cloud clipboard synchronization.",
-	"icons": {},
-
-	// "incognito": "not_allowed",
-	"minimum_chrome_version": "42",
-	"offline_enabled": false,
-	
-	"key": "gonkkepdmdkopdeapomlcleddingnbgl",
-	
-	"background":
-	{
-		"page": "/background/index.html",
-		"persistent": true
-	},
-
-	"browser_action":
-	{
-		"default_popup": "/popup/index.html",
-		"default_title": "Zyncco"
-	},
-
-	"options_ui":
-	{
-		"chrome_style": true,
-		"page": "/window/options.html"
-	},
-
-	"permissions": [
-		"background",
-		"contextMenus",
-		"clipboardRead",
-		"clipboardWrite",
-		"storage"
-	]
+  "manifest_version": 2,
+  "name": "Zyncco",
+  "version": "1.0.0",
+  "author": "Zyncco <support@zync.co>",
+  "homepage_url": "https://zync.co",
+  "description": "End-to-end encrypted cloud clipboard synchronization.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "browser_action": {
+    "default_title": "Zyncco",
+    "default_popup": "/popup/index.html"
+  },
+  "oauth2": {
+    "client_id": "958433754089-3uesevgsreu09ba7ba5svsbfh5jfhcrf.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "background": {
+    "persistent": true,
+    "scripts": [
+      "node_modules/pako/dist/pako.js",
+      "credential.js",
+      "zync.js"
+    ]
+  },
+  "permissions": [
+    "background",
+    "contextMenus",
+    "clipboardRead",
+    "clipboardWrite",
+    "tabs",
+    "storage",
+    "identity"
+  ],
+  "optional_permissions": []
 }

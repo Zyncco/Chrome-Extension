@@ -1,52 +1,27 @@
 {
-	"name": "zyncco",
-	"version": "1.0.0",
-	"description": "End-to-end encrypted cloud clipboard synchronisation.",
-
-	"homepage": "https://zync.co/",
-	"repository": "github:Zyncco/Chrome-Extension",
-	"bugs": "https://github.com/Zyncco/Chrome-Extension/issues",
-
-	"license": "SEE LICENSE IN LICENSE.txt",
-
-	"author": {
-		"name": "Zyncco Development Team",
-		"email": "support@zync.co",
-		"url": "https://zync.co/"
-	},
-	"contributers": [
-		{
-			"name": "Amir Omidi",
-			"email": "amir.omidi@zync.co",
-			"url": "https://aaomidi.com/"
-		},
-		{
-			"name": "Matthew McCune",
-			"email": "git@mattrick.me",
-			"url": "https://mattrick.me/"
-		},
-		{
-			"name": "Brandon",
-			"email": "",
-			"url": ""
-		}
-	],
-
-	"dependencies": {
-		"firebase": "^4.1.1",
-		"pako": "^1.0.5"
-	},
-	"devDependencies": {},
-
-	"main": "manifest.json",
-	"files": [
-		"assets/",
-		"background/",
-		"popup/",
-		"window/",
-	],
-
-	"scripts": {
-		"test": "node scripts/deploy.js pack upload publish"
-	}
+  "name": "Zyncco",
+  "version": "1.0.0",
+  "description": "End-to-end encrypted cloud clipboard synchornization",
+  "repository": "https://github.com/Zyncco/Chrome-Extension.git",
+  "author": "Zync <support@zync.co>",
+  "license": "TBD",
+  "dependencies": {
+    "fetch-api": "^0.0.2",
+    "firebase": "^4.0.0",
+    "pako": "^1.0.5",
+    "typescript": "^2.3.3"
+  },
+  "devDependencies": {},
+  "maintainers": [
+    {
+      "name": "Amir Ali Omidi",
+      "email": "amir.omidi@zync.co",
+      "url": "https://aaomidi.com/"
+    },
+    {
+      "name": "Matthew McCune",
+      "email": "git@mattrick.me",
+      "url": "https://mattrick.me"
+    }
+  ]
 }
