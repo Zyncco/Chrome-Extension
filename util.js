@@ -36,10 +36,10 @@ ZyncUtil.handleCallbackError = function (err) {
 
 ZyncUtil.storageGetAll = function(prefix, callback) {
 	chrome.storage.local.get(null, result => {
-		if (prefix == undefined) {
+		if (prefix === undefined) {
 			callback(result);
 		} else {
-			let all = {}
+			let all = {};
 			
 			Object.keys(result).forEach(key => {
 				if (key.startsWith(prefix)) {

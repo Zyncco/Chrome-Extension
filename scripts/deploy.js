@@ -1,5 +1,5 @@
-const URL_REFRESH_TOKEN = ""
-const URL_WEBSTORE_UPLOAD = ""
+const URL_REFRESH_TOKEN = "";
+const URL_WEBSTORE_UPLOAD = "";
 
 function packExtension() {
 	setTimeout(() => {
