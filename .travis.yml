@@ -3,4 +3,9 @@ node_js:
   - "node"
 
 script:
-  - bash ./scripts/deploy.sh
+  - npm install
+  - npm run build
+
+cache:
+  directories:
+    - "node_modules"

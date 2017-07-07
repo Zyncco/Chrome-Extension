@@ -6,13 +6,13 @@
   "homepage_url": "https://zync.co",
   "description": "End-to-end encrypted cloud clipboard synchronization.",
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "images/icons/icon16.png",
+    "48": "images/icons/icon48.png",
+    "128": "images/icons/icon128.png"
   },
   "browser_action": {
     "default_title": "Zyncco",
-    "default_popup": "/popup/index.html"
+    "default_popup": "pages/popup.html"
   },
   "oauth2": {
     "client_id": "958433754089-3uesevgsreu09ba7ba5svsbfh5jfhcrf.apps.googleusercontent.com",
@@ -24,9 +24,7 @@
   "background": {
     "persistent": true,
     "scripts": [
-      "node_modules/pako/dist/pako.js",
-      "credential.js",
-      "zync.js"
+      "scripts/background.js"
     ]
   },
   "permissions": [

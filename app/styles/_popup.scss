@@ -1,0 +1,95 @@
+html {
+  width: 350px;
+  height: 500px;
+  overflow-x: hidden;
+}
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+}
+.zync-toolbar {
+  height: 56px;
+  width: 100%;
+  background-color: #488CFF;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.zync-toolbar .toolbar-brand {
+  font-size: 20px;
+  flex: 1;
+}
+
+.zync-toolbar .toolbar-actions a {
+  color: #FFF;
+  text-decoration: none;
+}
+
+.zync-toolbar .toolbar-actions i {
+  vertical-align: middle;
+}
+
+.zync-activator-container {
+  height: calc(100% - 56px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zync-activator {
+  max-width: 200px;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+}
+
+.zync-activator img {
+  display: block;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.zync-activator:before,.zync-activator:after {
+  background-color: #488CFF;
+  border-radius: 100%;
+  width: 100%;
+  height: 100%;
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.5;
+}
+
+.zync-activator.active:before {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.zync-activator.active:after {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+.zync-activator:not(.active) img {
+  filter: grayscale(1);
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
