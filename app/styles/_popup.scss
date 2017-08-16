@@ -33,6 +33,12 @@ body {
   vertical-align: middle;
 }
 
+.zync-popup-login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .zync-activator-container {
   height: calc(100% - 56px);
   width: 100%;

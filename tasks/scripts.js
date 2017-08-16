@@ -12,7 +12,7 @@ import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 const ENV = args.production ? 'production' : 'development'
 
 gulp.task('scripts', (cb) => {
-  return gulp.src('app/scripts/*.js')
+  return gulp.src(['app/scripts/*.js', 'app/scripts/**/*.js'])
     .pipe(plumber({
       errorHandler () {
         // Webpack will log the errors
@@ -43,6 +43,7 @@ gulp.task('scripts', (cb) => {
         {
           test: /\.js$/,
           loader: 'babel-loader',
+          exclude: /node_modules/,
           enforce: 'post',
           query: {
             presets: ["es2015"]

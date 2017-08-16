@@ -1,5 +1,6 @@
 // Polyfill the Web Extensions API for Chrome and Opera
 import browser from 'webextension-polyfill';
+import firebase from 'firebase';
 
 export default class Zync {
   constructor() {

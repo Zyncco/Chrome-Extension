@@ -12,10 +12,10 @@
   },
   "browser_action": {
     "default_title": "Zyncco",
-    "default_popup": "pages/popup.html"
+    "default_popup": "pages/popup/login.html"
   },
   "oauth2": {
-    "client_id": "958433754089-3uesevgsreu09ba7ba5svsbfh5jfhcrf.apps.googleusercontent.com",
+    "client_id": "183678249083-gtf944av6gjrfpbb53v4j2ogdde3ts4b.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile"
@@ -36,5 +36,6 @@
     "storage",
     "identity"
   ],
-  "optional_permissions": []
+  "optional_permissions": [],
+  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://apis.google.com; object-src 'self'"
 }
