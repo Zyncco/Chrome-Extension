@@ -11,6 +11,9 @@ import MessageHandler from './background-message-handler';
 const zync = new Zync();
 const api = new ZyncAPI();
 const messageHander = new MessageHandler(zync, api);
+// all the timestamps that the Extensions
+// has already read
+const readTimestamps = [0];
 var loginCallback;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -37,13 +40,16 @@ api.firebase().messaging().onMessage((payload) => {
     return;
   }
 
-  api.getClipboard(data.timestamp).then((clip) => {
-    zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
-      // todo consider activity button
-      writeToClipboard(payload.data);
-      sendNotification("Clipboard updated!", "New content has been written to your clipboard");
-    }).catch((error) => console.log("Uh oh! " + error + "|" + chrome.runtime.lastError));
-  })
+  if (readTimestamps.indexOf(parseInt(data.timestamp, 10)) === -1) {
+    api.getClipboard(data.timestamp).then((clip) => {
+      zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+        // todo consider activity button
+        readTimestamps.push(data.timestamp);
+        writeToClipboard(payload.data);
+        sendNotification("Clipboard updated!", "New content has been written to your clipboard");
+      }).catch((error) => console.log("Uh oh! " + error + "|" + chrome.runtime.lastError));
+    })
+  }
 });
 
 function sendMessage(page, method, message, callback) {
@@ -78,7 +84,6 @@ function writeToClipboard(text) {
 }
 
 var helper = null;
-var helperDiv = null;
 var last;
 
 function zyncCopyHandler() {
@@ -95,12 +100,6 @@ function zyncCopyHandler() {
         helper.value = "";
     }
 
-    if (helperDiv === null || helperDiv === undefined) {
-        helperDiv = bg.document.createElement("div");
-        helperDiv.contentEditable = true;
-        document.body.appendChild(helperDiv);
-    }
-
     helper.select();
     bg.document.execCommand("Paste");
 
@@ -113,11 +112,14 @@ function zyncCopyHandler() {
     last = data;
 
     if (api.token) {
-      zync.createPayload(data).then((payload) => api.postClipboard(payload).then((res) => {
-        if (res.success) {
-          sendNotification("Clipboard posted!", "Your latest clip was posted successfully");
-        }
-      }));
+      zync.createPayload(data).then((payload) => {
+        readTimestamps.push(payload.timestamp);
+        api.postClipboard(payload).then((res) => {
+          if (res.success) {
+            sendNotification("Clipboard posted!", "Your latest clip was posted successfully");
+          }
+        });
+      });
     }
 }
 
