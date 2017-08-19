@@ -6,15 +6,39 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto|Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/material.blue-pink.min.css">
   </head>
   <body class="zync-login-container">
-    <div class="zync-login-content">
-      <img src="../images/icons/icon128.png" class="zync-login-logo">
-      <span class="zync-welcome">Welcome to Zync</span>
-      <span class="zync-welcome-subtitle">Login and enable notifications to get started</span>
-      <img src="../images/google_signin.png" class="zync-login-button">
+    <div class="zync-login-wrapper center">
+      <div id="intro" class="zync-login-content">
+        <img src="../images/icons/icon128.png" class="zync-login-logo">
+        <span class="zync-welcome">Welcome to Zync</span>
+        <span class="zync-welcome-subtitle">Login and enable notifications to get started</span>
+        <img src="../images/google_signin.png" class="zync-login-button">
+      </div>
+
+      <div id="loading" class="zync-login-content">
+        <div class="mdl-spinner mdl-js-spinner is-active"></div>
+      </div>
+
+      <div id="crypto-pass" class="zync-login-content">
+        <span class="zync-welcome">Logged in!</span>
+        <span class="zync-welcome-subtitle" style="margin-bottom: 30px;">Please enter the password you're using for encryption</span>
+
+        <div class="zync-form-entry mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" id="password" type="password" pattern="\S{10,}">
+          <label class="mdl-textfield__label" for="password">Encryption Pass</label>
+          <span class="mdl-textfield__error">Must be at least 10 characters</span>
+        </div>
+      </div>
+
+      <div id="setup" class="zync-login-content">
+        <span class="zync-setup-title">Setup complete!</span>
+        <span class="zync-welcome-subtitle">Your clipboard will now be synchronized</span>
+      </div>
     </div>
 
+    <script src="../scripts/material.min.js"></script>
     <script src="../scripts/login.js"></script>
   </body>
 </html>

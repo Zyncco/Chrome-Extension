@@ -34,8 +34,12 @@
     "clipboardWrite",
     "tabs",
     "storage",
-    "identity"
+    "identity",
+    "notifications"
   ],
   "optional_permissions": [],
-  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://apis.google.com; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://apis.google.com; object-src 'self'",
+  "externally_connectable": {
+    "matches": ["chrome-extension://cjknenicmcobcbgpmjlmmmbplebhjcjm/*"]
+  }
 }

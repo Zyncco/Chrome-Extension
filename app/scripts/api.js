@@ -12,6 +12,10 @@ var config = {
 firebase.initializeApp(config);
 
 export default class ZyncAPI {
+  firebase() {
+    return firebase;
+  }
+
   static firebase() {
     return firebase;
   }
@@ -24,8 +28,11 @@ export default class ZyncAPI {
     data.headers = {
       'Accept': 'text/plain',
       'Content-Type': 'text/plain',
-      'X-ZYNC-TOKEN': this.token,
     };
+
+    if (this.token) {
+      data.headers['X-ZYNC-TOKEN'] = this.token;
+    }
 
     return fetch(url + route, data)
              .then((res) => res.json()).then((res) => ZyncAPI.genericErrorManagement(res));
@@ -39,10 +46,31 @@ export default class ZyncAPI {
   }
 
   authenticate(firebaseToken, messagingToken) {
+    this.deviceId = messagingToken;
     return this.post('/user/authenticate', {
-      'device-id': messagingToken,
-      'firebase-token': firebaseToken
+      data: {
+        'device-id': messagingToken,
+        'firebase-token': firebaseToken
+      }
     });
+  }
+
+  validateDevice(zyncToken, randomToken) {
+    this.token = zyncToken;
+    return this.post('/device/validate', {
+      data: {
+        'device-id': this.deviceId,
+        'random-token': randomToken
+      }
+    })
+  }
+
+  getClipboard(timestamp) {
+    return this.request('/clipboard' + (timestamp ? ("/" + timestamp) : '')).then((response) => response.data);
+  }
+
+  postClipboard(data) {
+    return this.post('/clipboard', {data});
   }
 
   static genericErrorManagement(res) {
