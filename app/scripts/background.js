@@ -1,5 +1,5 @@
 // Automatic reloading for Chrome development
-import 'chromereload/devonly';
+//import 'chromereload/devonly';
 
 // Polyfill the Web Extensions API for Chrome and Opera
 import browser from 'webextension-polyfill';
