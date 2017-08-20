@@ -20,11 +20,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return messageHander[message.method](message, sendResponse);
 });
 
-navigator.serviceWorker.register('/scripts/firebase-sw.js').then((registration) => {
-  api.firebase().messaging().useServiceWorker(registration);
-  console.log("registered firebase service worker");
-}).catch((error) => console.log("error registering service worker " + error))
-
 api.firebase().messaging().onMessage((payload) => {
   const data = payload.data;
 
@@ -56,7 +51,7 @@ function sendMessage(page, method, message, callback) {
   message.method = method;
 
   if (page) {
-    chrome.tabs.query({url: "chrome-extension://cjknenicmcobcbgpmjlmmmbplebhjcjm/pages/" + page + ".html"}, (tabs) => {
+    chrome.tabs.query({url: "chrome-extension://*/pages/" + page + ".html"}, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, message, callback);
     });
   } else {

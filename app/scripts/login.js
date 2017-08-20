@@ -1,21 +1,27 @@
+import ZyncAPI from './api';
+
 const google = document.querySelector('.zync-login-button');
+const api = new ZyncAPI();
 
 // LOGIN BUTTON
 google.addEventListener('click', () => {
   transitionTo("loading", "intro");
-  sendMessage("getToken", {}, (res) => startAuth(true, res.messagingToken));
+
+  api.setupFirebase().then((messagingToken) => startAuth(false));
 });
 
-function startAuth(interactive, messagingToken) {
+function startAuth(interactive) {
   chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
     if (chrome.runtime.lastError && !interactive) {
+      startAuth(true);
       console.log('It was not possible to get a token programmatically.');
     } else if(chrome.runtime.lastError) {
       console.error(chrome.runtime.lastError);
     } else if (token) {
-      sendMessage("login", {token, messagingToken}, (res) => {
+      sendMessage("login", {token}, (res) => {
         if (!res.success) {
-          startAuth(interactive, messagingToken);
+          startAuth(interactive);
+          return;
         }
 
         console.log("Login response!")
@@ -37,7 +43,6 @@ function transitionTo(to, from) {
 function sendMessage(method, message, callback) {
   message.method = method;
   chrome.runtime.sendMessage(
-    "cjknenicmcobcbgpmjlmmmbplebhjcjm",
     message,
     callback
   );

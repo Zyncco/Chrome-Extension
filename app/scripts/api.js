@@ -20,6 +20,13 @@ export default class ZyncAPI {
     return firebase;
   }
 
+  setupFirebase() {
+    return navigator.serviceWorker.register('/scripts/firebase-sw.js').then((registration) => {
+      firebase.messaging().useServiceWorker(registration);
+      return firebase.messaging().getToken();
+    });
+  }
+
   request(route, data) {
     if (!data) {
       data = {}
