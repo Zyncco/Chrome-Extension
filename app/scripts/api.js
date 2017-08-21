@@ -20,6 +20,13 @@ export default class ZyncAPI {
     return firebase;
   }
 
+  /**
+   * Register service worker, tell firebase to use it, and attempt to get the token.
+   * 
+   * The token request WILL fail from a background script if a page did not call this method beforehand. 
+   * Notification permissions aside (as they can be granted through manifest), Firebase will try to
+   * subscribe using GCM's PushManager and will be halted indefinitely.
+   */
   setupFirebase() {
     return navigator.serviceWorker.register('/scripts/firebase-sw.js').then((registration) => {
       firebase.messaging().useServiceWorker(registration);

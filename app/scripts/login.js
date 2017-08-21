@@ -7,6 +7,12 @@ const api = new ZyncAPI();
 google.addEventListener('click', () => {
   transitionTo("loading", "intro");
 
+  // always setup firebase before contacting the background script
+  // this method will request permissions occasionally, so failing
+  // shouldn't be too unexpected.
+  //
+  // we try to get the auth token without prompting the user
+  // just in case they already logged in before
   api.setupFirebase().then((messagingToken) => startAuth(false));
 });
 
@@ -66,7 +72,7 @@ document.querySelector('#password').addEventListener('keydown', (event) => {
       return;
     }
 
-    sendMessage("setPass", {pass}, (res) => transitionTo("setup", "crypto-pass"))
+    sendMessage("setPass", {pass, login: true}, (res) => transitionTo("setup", "crypto-pass"))
   }
 })
 

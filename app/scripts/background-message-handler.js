@@ -1,9 +1,21 @@
 export default class MessageHandler {
-  constructor(zync, api) {
-    this.zync = zync;
-    this.api = api;
+  constructor(background) {
+    this.zync = background.zync;
+    this.api = background.api;
+    this.background = background;
   }
 
+  /**
+   * Login to firebase. This will send you back a success response
+   * when we have authenticated with firebase. Afterwards, the sender
+   * (login.html) will have a message sent to it after messaging
+   * handshake is complete.
+   * 
+   * This method requires that you have called ZyncAPI#setupFirebase()
+   * on the page's end, as that would take care of specifically subscribing
+   * to Firebase Messaging beforehand (PushManager#subscribe); a task which
+   * you cannot do in the background script.
+   */
   login(message, sendResponse) {
     this.api.setupFirebase().then((messagingToken) => {
       const token = message.token;
@@ -29,8 +41,34 @@ export default class MessageHandler {
   setPass(message, sendResponse) {
     this.zync.setEncryptionPass(message.pass).then((pass) => {
       sendResponse({success: true});
+
+      // are we logging in? If so, get the latest clip
+      // and activate clipboard listener.
+      // we also need to be active. Don't want to be uselessly
+      // running the clip listener and toying around when we're not
+      // supposed to
+      if (message.login && this.zync.isActive()) {
+        this.api.getClipboard().then((clip) => {
+          this.background.updateToClip(clip).then((payload) => {
+            this.background.clipboardListener.activate();
+          });
+        });
+      }
     });
 
     return true;
+  }
+
+  getActive(message, sendResponse) {
+    sendResponse({active: this.zync.isActive()});
+  }
+
+  toggleActive(message, sendResponse) {
+    const val = !this.zync.isActive();
+    this.zync.setActive(val);
+    this.background.updateActivity(val);
+
+    console.log("Successfully set activity to " + val);
+    sendResponse({success: true});
   }
 }

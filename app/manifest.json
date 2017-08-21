@@ -41,5 +41,6 @@
   "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://apis.google.com; object-src 'self'",
   "externally_connectable": {
     "ids": ["*"]
-  }
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA28J/GxOXWg1wQu7/7kTs4jQeWJIOIORMo2FmdWUQH+8qnM2CHdw2wcRofz3HZ91SgE9+J+hYiZU6H5ELr9m0a05vRw4Yv7PoKcV/cRuWIxKbI0O0QKN+zoxKgp8FuUeAF87NZdJ01d4pVwE9Agu4gz3jw2ML2G9wJD9ixSBtQJ7YKwhMGUy84bDO7Ntzh7a37z/WuCy8UTN1d01VrKQOD/AOZEcR37AcEHovAgdNAOi3dsK75uEHbs8QsiKrPf5GXr/4KrUqtjclQwPZhn7DbGb6VVAlXznRdbR6m8WE6FZ2i7dWAyaMJ/xuv/l5bFQbJs+cLuyNxr+o5abtrCzQ7QIDAQAB"
 }
