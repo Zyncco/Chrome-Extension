@@ -29,9 +29,9 @@ document.querySelector('.toolbar-actions').addEventListener('click', () => {
     const historyElement = document.querySelector('#history');
     var row;
 
-    if (historyElement.hasChildNodes()) {
-      historyElement.childNodes.forEach((node) => historyElement.removeChild(node));
-    }
+    while (historyElement.firstChild) {
+      historyElement.removeChild(historyElement.firstChild);
+  }
 
     for (var i = 1; i <= history.length; i++) {
       const clip = history[i - 1];
@@ -66,25 +66,31 @@ document.querySelector('.toolbar-actions').addEventListener('click', () => {
         if (!linkMatches) {
           text.textContent = clip.payload.data;
         } else {
+          // create any a elements for any links in the text
           for (var j = 0; j < linkMatches.length; j++) {
             var match = linkMatches[j];
             var index = content.indexOf(match);
             var before = content.substring(0, index);
 
+            // is there content before us? if so, add it
             if (before) {
               var beforeElement = document.createElement('div');
               beforeElement.textContent = before;
               text.appendChild(beforeElement);
             }
             
+            // create the link itself
             var link = document.createElement('a');
             link.href = match;
             link.innerText = match;
 
+            // add to our text area
             text.appendChild(link);
 
+            // update content with everything after the link
             content = content.substring(index + match.length);
 
+            // if we're the last element, append the rest of normal text content
             if (j === linkMatches.length - 1) {
               var afterElement = document.createElement('div');
               afterElement.textContent = content;
@@ -93,10 +99,22 @@ document.querySelector('.toolbar-actions').addEventListener('click', () => {
           }
         }
 
+        // add our text to the content container
         contentContainer.appendChild(text);
       }
 
       // TODO actions
+      const copyAction = document.createElement('i');
+      copyAction.classList.add("zync-history-action", "material-icons", "md-dark");
+      copyAction.innerHTML = "content_copy";
+
+      copyAction.addEventListener('click', () => {
+        if (clip["payload-type"] === "TEXT") {
+          writeToClipboard(clip.payload.data);
+        }
+      });
+
+      actionsContainer.appendChild(copyAction);
 
       card.appendChild(contentContainer);
       card.appendChild(actionsContainer);
@@ -128,6 +146,16 @@ function transitionTo(to, from) {
   }
 
   document.querySelector("#" + to).style.transform = "translateX(0%)";
+}
+
+function writeToClipboard(text) {
+  var copyFrom = document.createElement("textarea");
+  copyFrom.textContent = text;
+  var body = document.getElementsByTagName('body')[0];
+  body.appendChild(copyFrom);
+  copyFrom.select();
+  document.execCommand('copy');
+  body.removeChild(copyFrom);
 }
 
 transitionTo("main");

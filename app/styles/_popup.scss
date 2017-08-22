@@ -45,6 +45,16 @@ body {
 
 .zync-history-entry-actions {
   height: 20%;
+  justify-content: flex-end;
+  display: flex;
+}
+
+.zync-history-action {
+  cursor: pointer;
+}
+
+.material-icons.md-dark {
+  color: rgba(0, 0, 0, 0.54);
 }
 
 .zync-history-text {
