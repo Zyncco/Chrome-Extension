@@ -38,6 +38,10 @@ export default class MessageHandler {
     return true;
   }
 
+  getHistory(message, sendResponse) {
+    sendResponse({history: this.background.history});
+  }
+
   setPass(message, sendResponse) {
     this.zync.setEncryptionPass(message.pass).then((pass) => {
       sendResponse({success: true});
@@ -54,6 +58,25 @@ export default class MessageHandler {
           });
         });
       }
+
+      this.api.getHistory().then((data) => {
+        var timestamps = data.history.filter((x) => this.zync.isTypeSupported(x["payload-type"]))
+                                     .map((x) => x.timestamp);
+        
+        this.api.getClipboard(timestamps).then((data) => {
+          const clips = data.clipboards;
+          var promises = [];
+
+          clips.forEach((clip) => {
+            promises.push(this.zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+              clip.payload = payload;
+              this.background.appendToHistory(clip);
+            }))
+          });
+
+          Promise.all(promises).catch((error) => this.background.handleDecryptionError());
+        })
+      })
     });
 
     return true;

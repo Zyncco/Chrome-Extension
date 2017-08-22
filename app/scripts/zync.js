@@ -21,6 +21,10 @@ export default class Zync {
       .then((result) => this.encryptionPassword = result.encryptionPassword);
   }
 
+  isTypeSupported(type) {
+    return type === "TEXT";
+  }
+
   setEncryptionPass(pass) {
     return sha256(pass).then((encryptionPassword) => {
       browser.storage.local.set({ encryptionPassword });

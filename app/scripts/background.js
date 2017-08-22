@@ -21,6 +21,7 @@ export default class Background {
     // the last clip data we read from firebase
     // used to be ignored in clip event
     this.lastRead = "";
+    this.history = [];
 
     // setup extension message handler
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -29,6 +30,10 @@ export default class Background {
 
     // setup firebase listener
     this.api.firebase().messaging().onMessage(this.handleFirebaseMessage.bind(this));
+  }
+
+  handleDecryptionError() {
+    this.sendNotification("Error decrypting clip in history", "Ensure encryption password is the same on all devices", "zync_decrypt_error");
   }
 
   handleClipboardEvent(data) {
@@ -40,6 +45,7 @@ export default class Background {
         this.api.postClipboard(payload).then((res) => {
           if (res.success) {
             this.removeNotification("zync_posting_clip");
+            this.appendToHistory(payload);
 
             // post clipboard posted notif.
             // remove after five seconds later to avoid
@@ -56,6 +62,20 @@ export default class Background {
         });
       });
     }
+  }
+
+  appendToHistory(clip) {
+    this.history.push(clip);
+
+    if (this.history.length > 10) {
+      this.history = this.history.slice(1, 11);
+    }
+
+    this.sortHistory();
+  }
+
+  sortHistory() {
+    this.history.sort((a1, a2) => a2.timestamp - a1.timestamp);
   }
 
   handleFirebaseMessage(payload) {
@@ -81,13 +101,13 @@ export default class Background {
     }
   
     if (this.readTimestamps.indexOf(parseInt(data.timestamp, 10)) === -1) {
-      this.api.getClipboard(data.timestamp).then(this.updateToClip.bind(this));
+      this.api.getClipboard(data.timestamp).then(this.updateToClip.bind(this)).then(this.appendToHistory.bind(this));
     }
   }
 
   updateToClip(clip) {
    return this.zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
-      this.readTimestamps.push(payload.timestamp);
+      this.readTimestamps.push(clip.timestamp);
       this.lastRead = payload.data;
       this.writeToClipboard(payload.data);
       var preview = payload.data.split("\n")[0].trim();

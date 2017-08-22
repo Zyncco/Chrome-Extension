@@ -76,5 +76,4 @@ document.querySelector('#password').addEventListener('keydown', (event) => {
   }
 })
 
-// open intro
 transitionTo("intro");

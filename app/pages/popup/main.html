@@ -1,27 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html style="width: 350px;height: 500px;overflow-x: hidden;">
   <head>
     <meta charset="UTF-8">
     <title>Zyncco</title>
 
     <link href="https://fonts.googleapis.com/css?family=Roboto|Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/material.blue-pink.min.css">
   </head>
   <body>
-    <div class="zync-toolbar">
-      <div class="toolbar-brand">
-        Zync
+    <div class="zync-content-wrapper">
+      <div class="zync-toolbar">
+        <div class="toolbar-brand">
+          Zync
+        </div>
+        <div class="toolbar-actions">
+          <i class="material-icons">settings</i>
+        </div>
       </div>
-      <div class="toolbar-actions">
-        <a href="#"><i class="material-icons">settings</i></a>
+
+      <div id="main" class="zync-content">
+        <div class="zync-activator-container">
+          <div class="zync-activator active">
+            <img src="../../images/logo.svg">
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="zync-activator-container">
-      <div class="zync-activator active">
-        <img src="../../images/logo.svg">
+
+      <div id="loading" class="zync-content">
+        <div class="mdl-spinner mdl-js-spinner is-active"></div>
+      </div>
+
+      <div id="history" class="zync-content zync-history">
       </div>
     </div>
 
-    <script src="../../scripts/popup-main.js"></script>
+    <script src="../../scripts/material.min.js"></script>
+    <script src="../../scripts/popup.js"></script>
   </body>
 </html>

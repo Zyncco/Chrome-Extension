@@ -79,8 +79,19 @@ export default class ZyncAPI {
     })
   }
 
+  getHistory() {
+    return this.request('/clipboard/history').then((response) => response.data);
+  }
+
   getClipboard(timestamp) {
-    return this.request('/clipboard' + (timestamp ? ("/" + timestamp) : '')).then((response) => response.data);
+    var parsed = timestamp;
+
+    if (parsed && parsed.join) {
+      parsed = parsed.join(",");
+    }
+
+    var append = (timestamp ? ("/" + parsed) : '');
+    return this.request('/clipboard' + append).then((response) => response.data);
   }
 
   postClipboard(data) {
