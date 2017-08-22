@@ -25,7 +25,7 @@ document.querySelector('.toolbar-actions').addEventListener('click', () => {
       return;
     }
 
-    const history = res.history;
+    const history = res.history.filter((clip) => clip.payload && clip.payload.data);
     const historyElement = document.querySelector('#history');
     var row;
 
@@ -57,9 +57,41 @@ document.querySelector('.toolbar-actions').addEventListener('click', () => {
 
       // if it's text, create the appropriate element and add it to the container
       if (clip["payload-type"] === "TEXT") {
-        var text = document.createElement('span');
+        var content = clip.payload.data;
+
+        const linkMatches = content.match(linkRegexExp);
+        var text = document.createElement('div');
         text.classList.add("zync-history-text");
-        text.textContent = clip.payload.data;
+        
+        if (!linkMatches) {
+          text.textContent = clip.payload.data;
+        } else {
+          for (var j = 0; j < linkMatches.length; j++) {
+            var match = linkMatches[j];
+            var index = content.indexOf(match);
+            var before = content.substring(0, index);
+
+            if (before) {
+              var beforeElement = document.createElement('div');
+              beforeElement.textContent = before;
+              text.appendChild(beforeElement);
+            }
+            
+            var link = document.createElement('a');
+            link.href = match;
+            link.innerText = match;
+
+            text.appendChild(link);
+
+            content = content.substring(index + match.length);
+
+            if (j === linkMatches.length - 1) {
+              var afterElement = document.createElement('div');
+              afterElement.textContent = content;
+              text.appendChild(afterElement);
+            }
+          }
+        }
 
         contentContainer.appendChild(text);
       }
@@ -99,3 +131,5 @@ function transitionTo(to, from) {
 }
 
 transitionTo("main");
+
+const linkRegexExp = new RegExp(/https?:\/\/[www\.]?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/g);

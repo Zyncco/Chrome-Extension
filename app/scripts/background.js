@@ -65,6 +65,16 @@ export default class Background {
   }
 
   appendToHistory(clip) {
+    // is the clip encrypted?
+    if (clip.payload && !clip.payload.data) {
+      // decrypt then append to history
+      this.zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+        clip.payload = payload;
+        this.appendToHistory(clip);
+      });
+      return;
+    }
+
     this.history.push(clip);
 
     if (this.history.length > 10) {

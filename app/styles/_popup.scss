@@ -17,6 +17,7 @@ body {
   margin-top: 56px;
   display: flex;
   flex-direction: column;
+  justify-content: normal;
 }
 
 .zync-history-row {
@@ -38,6 +39,7 @@ body {
 .zync-history-entry-container {
   height: 80%;
   padding-left: 10px;
+  padding-top: 5px;
   overflow: hidden;
 }
 
@@ -48,6 +50,9 @@ body {
 .zync-history-text {
   font-size: 12px;
   white-space: pre-wrap;
+  width: 100%;
+  height: 100%;
+  word-wrap: break-word;
 }
 
 .zync-toolbar {
