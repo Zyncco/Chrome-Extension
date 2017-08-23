@@ -10,11 +10,15 @@ body {
   width: 100vw;
 }
 
+.zync-popup-content.zync-content {
+  transform: translateX(-100%);
+}
+
 .zync-history {
   align-self: flex-start;
   overflow-y: auto;
   height: 450px;
-  margin-top: 56px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: normal;

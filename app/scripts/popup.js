@@ -16,17 +16,17 @@ sendMessage("getActive", {}, (res) => {
   }
 });
 
-document.querySelector('.toolbar-actions').addEventListener('click', () => {
-  transitionTo("loading", "main");
+document.querySelector('#history-icon').addEventListener('click', () => {
+  transitionMenu("loading", "main");
 
   sendMessage("getHistory", {}, (res) => {
-    if (res === undefined || res === null) {
-      transitionTo("main", "loading");
+    if (!res || !res.history || res.history.length === 0) {
+      transitionMenu("main", "loading");
       return;
     }
 
     const history = res.history.filter((clip) => clip.payload && clip.payload.data);
-    const historyElement = document.querySelector('#history');
+    const historyElement = document.querySelector('#history-content');
     var row;
 
     while (historyElement.firstChild) {
@@ -128,8 +128,12 @@ document.querySelector('.toolbar-actions').addEventListener('click', () => {
       }
     }
 
-    transitionTo("history", "loading");
+    transitionMenu("history", "loading");
   })
+})
+
+document.querySelector('#history-back').addEventListener('click', () => {
+  transitionMenu("main", "history", true)
 })
 
 function sendMessage(method, message, callback) {
@@ -140,12 +144,15 @@ function sendMessage(method, message, callback) {
   );
 }
 
-function transitionTo(to, from) {
+function transitionMenu(to, from, exit) {
   if (from) {
-    document.querySelector("#" + from).style.transform = "translateX(-100%)";
+    const val = (exit) ? 100 : -100;
+    document.querySelector("#" + from).style.transform = "translateX(" + val + "%)";
   }
 
-  document.querySelector("#" + to).style.transform = "translateX(0%)";
+  if (to) {
+    document.querySelector("#" + to).style.transform = "translateX(0%)";
+  }
 }
 
 function writeToClipboard(text) {
@@ -158,6 +165,6 @@ function writeToClipboard(text) {
   body.removeChild(copyFrom);
 }
 
-transitionTo("main");
+transitionMenu("main");
 
 const linkRegexExp = new RegExp(/https?:\/\/[www\.]?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/g);

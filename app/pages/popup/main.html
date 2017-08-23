@@ -10,16 +10,17 @@
   </head>
   <body>
     <div class="zync-content-wrapper">
-      <div class="zync-toolbar">
-        <div class="toolbar-brand">
-          Zync
-        </div>
-        <div class="toolbar-actions">
-          <i class="material-icons">settings</i>
-        </div>
-      </div>
-
       <div id="main" class="zync-content">
+        <div class="zync-toolbar">
+          <div class="toolbar-brand">
+            <span>Zync</span>
+          </div>
+
+          <div class="toolbar-actions">
+            <i class="material-icons" id="history-icon">history</i>
+          </div>
+        </div>
+
         <div class="zync-activator-container">
           <div class="zync-activator active">
             <img src="../../images/logo.svg">
@@ -31,7 +32,18 @@
         <div class="mdl-spinner mdl-js-spinner is-active"></div>
       </div>
 
-      <div id="history" class="zync-content zync-history">
+      <div id="history" class="zync-content">
+        <div class="zync-toolbar">
+          <div class="toolbar-brand">
+              <i class="material-icons" id="history-back">arrow_back</i>
+          </div>
+
+          <div class="toolbar-actions">
+          </div>
+        </div>
+
+        <div id="history-content" class="zync-history">
+        </div>
       </div>
     </div>
 
