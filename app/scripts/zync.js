@@ -10,15 +10,38 @@ export default class Zync {
   constructor() {
     this.active = false;
     this.encryptionPassword = null;
+    this["sync-down"] = true;
+    this["sync-up"] = true;
+    this["notify-clip-change"] = false;
+
+    this.updateValues();
+  }
+
+  updateValues() {
+    const settingsKeys = [
+      'active',
+      'encryptionPassword',
+      'sync-up',
+      'sync-down',
+      'notify-clip-change'
+    ]
 
     // Check storage to see whether or not Zync should be active
-    browser.storage.local.get('active')
-      .then((result) => {
-        this.active = result.active;
-      });
+    browser.storage.local.get(settingsKeys).then((settings) => {
+      settingsKeys.forEach((key) => this[key] = settings[key]);
+    });
+  }
 
-    browser.storage.local.get('encryptionPassword')
-      .then((result) => this.encryptionPassword = result.encryptionPassword);
+  syncUp() {
+    return this["sync-up"];
+  }
+
+  syncDown() {
+    return this["sync-down"];
+  }
+
+  notifyClipChange() {
+    return this["notify-clip-change"];
   }
 
   isTypeSupported(type) {

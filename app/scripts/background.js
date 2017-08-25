@@ -37,27 +37,37 @@ export default class Background {
   }
 
   handleClipboardEvent(data) {
-    if (this.api.token && data && data !== this.lastRead) {
-      //this.sendNotification("Posting latest clip", "Please wait...", "zync_posting_clip");
+    if (this.zync.syncUp() && this.api.token && data && data !== this.lastRead) {
+      var removeLoading = false;
+
+      if (this.zync.notifyClipChange()) {
+        this.sendNotification("Posting latest clip", "Please wait...", "zync_posting_clip");
+        removeLoading = true;
+      }
 
       this.zync.createPayload(data).then((payload) => {
         this.readTimestamps.push(payload.timestamp);
         this.api.postClipboard(payload).then((res) => {
           if (res.success) {
-            //this.removeNotification("zync_posting_clip");
+            if (removeLoading) {
+              this.removeNotification("zync_posting_clip");
+            }
+
             this.appendToHistory(payload);
 
             // post clipboard posted notif.
             // remove after five seconds later to avoid
             // notification center spam
-            /*this.sendNotification(
-              "Clipboard posted!",
-              "Your latest clip was posted successfully",
-              null,
-              ((id) => {
-                setTimeout(() => this.removeNotification(id), 5000);
-              }).bind(this)
-            );*/
+            if (this.zync.notifyClipChange()) {
+              this.sendNotification(
+                "Clipboard posted!",
+                "Your latest clip was posted successfully",
+                null,
+                ((id) => {
+                  setTimeout(() => this.removeNotification(id), 5000);
+                }).bind(this)
+              );
+            }
           }
         });
       });
@@ -109,6 +119,10 @@ export default class Background {
     if (!this.zync.isActive()) {
       return;
     }
+
+    if (!this.zync.syncDown()) {
+      return;
+    }
   
     if (this.readTimestamps.indexOf(parseInt(data.timestamp, 10)) === -1) {
       this.api.getClipboard(data.timestamp).then(this.updateToClip.bind(this)).then(this.appendToHistory.bind(this));
@@ -120,13 +134,17 @@ export default class Background {
       this.readTimestamps.push(clip.timestamp);
       this.lastRead = payload.data;
       this.writeToClipboard(payload.data);
-      /*var preview = payload.data.split("\n")[0].trim();
 
-      if (preview.length > 25) {
-        preview = preview.substring(0, 23) + "…";
+      if (this.zync.notifyClipChange()) {
+        var preview = payload.data.split("\n")[0].trim();
+        
+        if (preview.length > 25) {
+          preview = preview.substring(0, 23) + "…";
+        }
+
+        this.sendNotification("Clipboard updated!", "\"" + preview + "\" has been written to your clipboard", "zync_new_content");
       }
 
-      this.sendNotification("Clipboard updated!", "\"" + preview + "\" has been written to your clipboard", "zync_new_content");*/
       return payload;
     }).catch((error) => console.log("Uh oh! " + error + "|" + chrome.runtime.lastError));
   }

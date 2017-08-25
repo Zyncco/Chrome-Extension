@@ -14,12 +14,57 @@ body {
   transform: translateX(-100%);
 }
 
-.zync-history {
+.zync-settings-entry {
+  height: 12.5%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+  padding-left: 15px;
+}
+
+.zync-settings-description {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.zync-settings-title {
+  font-size: 15px;
+}
+
+.zync-settings-divider {
+  height: 1px;
+  background-color: lightgray;
+}
+
+.zync-settings-subtitle {
+  font-size: 12px;
+  color: gray;
+}
+
+.zync-settings-action {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  width: 15%;
+  margin-left: auto; margin-right: 0;
+}
+
+.zync-settings-group-title {
+  font-size: 13px;
+  color: rgb(255,64,129);
+  margin-left: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.zync-scroll-container {
   align-self: flex-start;
   overflow-y: auto;
   height: 450px;
   width: 100%;
-  display: flex;
   flex-direction: column;
   justify-content: normal;
 }
@@ -33,7 +78,7 @@ body {
   margin-top: 10px;
   margin-bottom: 10px;
   flex: 1 1 auto;
-  min-height: 200px;
+  height: 200px;
 }
 
 .zync-history-entry {
@@ -67,6 +112,7 @@ body {
   width: 100%;
   height: 100%;
   word-wrap: break-word;
+  overflow-y: auto;
 }
 
 .zync-toolbar {

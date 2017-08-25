@@ -94,4 +94,9 @@ export default class MessageHandler {
     console.log("Successfully set activity to " + val);
     sendResponse({success: true});
   }
+
+  updateSettings(message, sendResponse) {
+    this.zync.updateValues();
+    sendResponse({success: true});
+  }
 }

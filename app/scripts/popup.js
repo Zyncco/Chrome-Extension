@@ -1,6 +1,8 @@
 //Temporary thing to enable/ disable Zync animation
 const activator = document.querySelector('.zync-activator');
 
+// handle activator
+
 activator.addEventListener('click', () => {
   activator.classList.toggle('active');
 
@@ -16,12 +18,16 @@ sendMessage("getActive", {}, (res) => {
   }
 });
 
-document.querySelector('#history-icon').addEventListener('click', () => {
-  transitionMenu("loading", "main");
+// register the options in the menu to go to settings, history, etc.
 
+document.querySelector("#settings-icon").addEventListener('click', () => {
+  updateSettings();
+  transitionMenu("settings", "main");
+})
+
+document.querySelector('#history-icon').addEventListener('click', () => {
   sendMessage("getHistory", {}, (res) => {
     if (!res || !res.history || res.history.length === 0) {
-      transitionMenu("main", "loading");
       return;
     }
 
@@ -128,13 +134,95 @@ document.querySelector('#history-icon').addEventListener('click', () => {
       }
     }
 
-    transitionMenu("history", "loading");
+    transitionMenu("history", "main");
   })
 })
+
+// Back icons
 
 document.querySelector('#history-back').addEventListener('click', () => {
   transitionMenu("main", "history", true)
 })
+
+document.querySelector('#settings-back').addEventListener('click', () => {
+  transitionMenu("main", "settings", true);
+})
+
+/*    FUNCTIONS START     */
+
+// updates the settings thing with appropriate values
+function updateSettings(register) {
+  const storage = chrome.storage.local;
+  const settingsKeys = [
+    'sync-up',
+    'sync-down',
+    'notify-clip-change'
+  ];
+
+  if (register) {
+    const dialog = document.querySelector('#password-dialog');
+    const passElement = document.querySelector('#password');
+
+    document.querySelector('#password-setting').addEventListener('click', () => {
+      dialog.showModal();
+    });
+
+    document.querySelector('#password-submit-button').addEventListener('click', () => {
+      var pass = passElement.value;
+
+      if (passElement.value.length < 10) {
+        return;
+      }
+
+      passElement.value = "";
+      storage.set({encryptionPassword: pass}, () => {
+        sendMessage('updateSettings', {});
+      });
+      dialog.close();
+    });
+
+    document.querySelector("#password-close-button").addEventListener('click', () => {
+      dialog.close();
+    })
+  }
+
+  storage.get(settingsKeys, (settings) => {
+    settingsKeys.forEach((key) => {
+      switch (key) {
+        case 'sync-up':
+        case 'sync-down':
+        case 'notify-clip-change':
+        var element = document.querySelector('#' + key + "-switch");
+
+        updateSwitch(element, settings[key]);
+
+        if (register) {
+          element.addEventListener('click', () => {
+            setTimeout(() => {
+              var obj = {};
+              obj[key] = element.classList.contains('is-checked');
+              storage.set(obj, () => {
+                sendMessage('updateSettings', {});
+              });
+            })
+          });
+        }
+
+        return;
+      }
+    })
+  });
+}
+
+function updateSwitch(element, val) {
+  if (val) {
+    if (!element.classList.contains("is-checked")) {
+      element.classList.add('is-checked');
+    }
+  } else {
+    element.classList.remove('is-checked');
+  }
+}
 
 function sendMessage(method, message, callback) {
   message.method = method;
@@ -145,13 +233,13 @@ function sendMessage(method, message, callback) {
 }
 
 function transitionMenu(to, from, exit) {
+  if (to) {
+    document.querySelector("#" + to).style.transform = "translateX(0%)";
+  }
+
   if (from) {
     const val = (exit) ? 100 : -100;
     document.querySelector("#" + from).style.transform = "translateX(" + val + "%)";
-  }
-
-  if (to) {
-    document.querySelector("#" + to).style.transform = "translateX(0%)";
   }
 }
 
@@ -165,6 +253,11 @@ function writeToClipboard(text) {
   body.removeChild(copyFrom);
 }
 
-transitionMenu("main");
+/*    FUNCTIONS END     */
 
+// go to main menu and register settings
+transitionMenu("main");
+updateSettings(true);
+
+// link regex for history
 const linkRegexExp = new RegExp(/https?:\/\/[www\.]?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/g);

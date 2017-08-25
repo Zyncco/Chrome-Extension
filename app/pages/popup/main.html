@@ -17,7 +17,14 @@
           </div>
 
           <div class="toolbar-actions">
-            <i class="material-icons" id="history-icon">history</i>
+            <button id="actions-menu" class="mdl-button mdl-js-button mdl-button--icon">
+              <i class="material-icons">more_vert</i>
+            </button>
+
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="actions-menu">
+              <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" id="history-icon">History</li>
+              <li class="mdl-menu__item" id="settings-icon">Settings</li>
+            </ul>
           </div>
         </div>
 
@@ -42,7 +49,92 @@
           </div>
         </div>
 
-        <div id="history-content" class="zync-history">
+        <div id="history-content" class="zync-scroll-container">
+        </div>
+      </div>
+
+      <div id="settings" class="zync-content">
+        <div class="zync-toolbar">
+          <div class="toolbar-brand">
+            <i class="material-icons" id="settings-back">arrow_back</i>
+          </div>
+    
+          <div class="toolbar-actions">
+          </div>
+        </div>
+
+        <div class="zync-scroll-container">
+          <div class="zync-settings-group-title">Encryption</div>
+
+          <div class="zync-settings-entry" id="password-setting" style="cursor: pointer">
+            <div class="zync-settings-description">
+              <span class="zync-settings-title">Encryption password</span>
+            </div>
+          </div>
+
+          <dialog class="mdl-dialog" id="password-dialog">
+            <h4 class="mdl-dialog-title">Password</h4>
+            <div class="mdl-dialog__content">
+              <p>Enter in your new password below<p>
+
+              <div class="zync-form-entry mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" id="password" type="password" pattern="\S{10,}">
+                <label class="mdl-textfield__label" for="password">Encryption password</label>
+                <span class="mdl-textfield__error">Must be at least 10 characters</span>
+              </div>
+            </div>
+
+            <div class="mdl-dialog__actions">
+              <button type="button" class="mdl-button close" id="password-submit-button">Submit</button>
+              <button type="button" class="mdl-button close" id="password-close-button">Close</button>
+            </div>
+          </dialog>
+
+          <div class="zync-settings-group-title">Sync</div>
+
+          <div class="zync-settings-entry">
+            <div class="zync-settings-description">
+              <span class="zync-settings-title">Sync up</span>
+              <span class="zync-settings-subtitle">Synchronize local clipboard to cloud</span>
+            </div>
+
+            <div class="zync-settings-action">
+              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" id="sync-up-switch" for="sync-up-input">
+                <input type="checkbox" id="sync-up-input" class="mdl-switch__input">
+              </label>
+            </div>
+          </div>
+
+          <div class="zync-settings-divider"></div>
+
+          <div class="zync-settings-entry">
+            <div class="zync-settings-description">
+              <span class="zync-settings-title">Sync down</span>
+              <span class="zync-settings-subtitle">Synchronize cloud clipboard with this device</span>
+            </div>
+
+            <div class="zync-settings-action">
+              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" id="sync-down-switch" for="sync-down-input">
+                <input type="checkbox" id="sync-down-input" class="mdl-switch__input">
+              </label>
+            </div>
+          </div>
+
+          <div class="zync-settings-group-title">Notifications</div>
+
+          <div class="zync-settings-entry">
+            <div class="zync-settings-description">
+              <span class="zync-settings-title">Clipboard Change</span>
+              <span class="zync-settings-subtitle">Be notified of changes to your clipboard</span>
+            </div>
+
+            <div class="zync-settings-action">
+              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" id="notify-clip-change-switch" for="clip-change-input">
+                <input type="checkbox" id="clip-change-input" class="mdl-switch__input">
+              </label>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
