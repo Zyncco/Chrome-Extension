@@ -45,7 +45,7 @@ export default class Zync {
   }
 
   isTypeSupported(type) {
-    return type === "TEXT";
+    return type === "TEXT" || type === "IMAGE";
   }
 
   setEncryptionPass(pass) {
@@ -68,7 +68,22 @@ export default class Zync {
     this.active = active;
   }
 
-  createPayload(data, type) {
+  encryptImage(data) {
+    const encryptAlgo = {
+      name: "AES-GCM",
+      tagLength: 128,
+      iv: generateRand(16)
+    }
+
+    return genKey(this.encryptionPassword).then((keyData) => {
+      return crypto.subtle.encrypt(encryptAlgo, keyData.key, data)
+                          .then((encrypted) => {
+                            return {encrypted: encrypted, salt: keyData.salt, iv: encryptAlgo.iv};
+                          })
+    });
+  }
+
+  createTextPayload(data) {
     var payload = {};
 
     data = pako.gzip(data);
@@ -84,47 +99,11 @@ export default class Zync {
 
     return genKey(this.encryptionPassword).then((keyData) => {
       return crypto.subtle.encrypt(encryptAlgo, keyData.key, buf)
-                          .then((encrypted) => preparePayload(encrypted, keyData.salt, encryptAlgo.iv, type));
+                          .then((encrypted) => this.preparePayload(encrypted, keyData.salt, encryptAlgo.iv, "TEXT"));
     })
   }
 
-  // takes in
-  // payload (base64ed encrypted string)
-  // salt (base64'd)
-  // iv (base64'd)
-  // password
-  decrypt(payload, salt, iv) {
-    const decryptAlgo = {
-      name: "AES-GCM",
-      length: 128,
-      iv: db64(iv)
-    };
-
-    return genKey(this.encryptionPassword, db64(salt)).then((pwd) => {
-      return crypto.subtle.decrypt(decryptAlgo, pwd.key, db64(payload))
-                          .then((decrypted) => decoder.decode(decrypted))
-                          .then((payload) => JSON.parse(payload))
-                          .then((payload) => {
-                            payload.data = db64(payload.data);
-                            payload.data = pako.ungzip(payload.data);
-                            payload.data = decoder.decode(payload.data);
-
-                            return payload;
-                          });
-    });
-  }
-}
-
-// debase64
-function db64(content) {
-  if (content.endsWith("\\")) {
-    content = content.substring(0, content.length - 1);
-  }
-
-  return base64.decode(content);
-}
-
-function preparePayload(payload, salt, iv, type) {
+  preparePayload(payload, salt, iv, type) {
     if (type === undefined)
         type = "TEXT";
 
@@ -135,10 +114,54 @@ function preparePayload(payload, salt, iv, type) {
     data.encryption.type = "AES256-GCM-NOPADDING";
     data.encryption.iv = base64.encode(iv);
     data.encryption.salt = base64.encode(salt);
-    data.payload = base64.encode(payload);
+
+    if (payload) {
+      data.payload = base64.encode(payload);
+    }
+
     data["payload-type"] = type;
 
     return data;
+  }
+
+  decrypt(payload, salt, iv) {
+    const decryptAlgo = {
+      name: "AES-GCM",
+      length: 128,
+      iv: db64(iv)
+    };
+
+    return genKey(this.encryptionPassword, db64(salt)).then((pwd) => {
+      return crypto.subtle.decrypt(decryptAlgo, pwd.key, payload);
+    })
+  }
+
+  // takes in
+  // payload (base64ed encrypted string)
+  // salt (base64'd)
+  // iv (base64'd)
+  // password
+  decryptText(payload, salt, iv) {
+    return this.decrypt(db64(payload), salt, iv)
+               .then((decrypted) => decoder.decode(decrypted))
+               .then((payload) => JSON.parse(payload))
+               .then((payload) => {
+                 payload.data = db64(payload.data);
+                 payload.data = pako.ungzip(payload.data);
+                 payload.data = decoder.decode(payload.data);
+
+                 return payload;
+                });
+  }
+}
+
+// debase64
+function db64(content) {
+  if (content.endsWith("\\")) {
+    content = content.substring(0, content.length - 1);
+  }
+
+  return base64.decode(content);
 }
 
 function intFromBytes(x) {

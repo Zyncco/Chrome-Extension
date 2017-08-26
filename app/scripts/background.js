@@ -3,6 +3,7 @@
 
 // Polyfill the Web Extensions API for Chrome and Opera
 import browser from 'webextension-polyfill';
+import base64 from 'base64-arraybuffer';
 
 import Zync from './zync';
 import ZyncAPI from './api';
@@ -36,7 +37,7 @@ export default class Background {
     this.sendNotification("Error decrypting clip in history", "Ensure encryption password is the same on all devices", "zync_decrypt_error");
   }
 
-  handleClipboardEvent(data) {
+  handleClipboardEvent(type, data) {
     if (this.zync.syncUp() && this.api.token && data && data !== this.lastRead) {
       var removeLoading = false;
 
@@ -45,40 +46,97 @@ export default class Background {
         removeLoading = true;
       }
 
-      this.zync.createPayload(data).then((payload) => {
-        this.readTimestamps.push(payload.timestamp);
-        this.api.postClipboard(payload).then((res) => {
-          if (res.success) {
-            if (removeLoading) {
-              this.removeNotification("zync_posting_clip");
-            }
+      if (type === "TEXT") {
+        this.postText(removeLoading, data);
+      } else if (type === "IMAGE") {
+        this.postImage(removeLoading, data);
+      }
+    }
+  }
 
-            this.appendToHistory(payload);
+  getImage(clip) {
+    return this.api.downloadLarge(clip.timestamp)
+            .then((buffer) => this.zync.decrypt(buffer, clip.encryption.salt, clip.encryption.iv))
+            .then((decrypted) => base64.encode(decrypted))
+            .then((payload) => {
+              clip.payload = {data: payload};
+              return clip;
+            })
+  }
 
-            // post clipboard posted notif.
-            // remove after five seconds later to avoid
-            // notification center spam
-            if (this.zync.notifyClipChange()) {
-              this.sendNotification(
-                "Clipboard posted!",
-                "Your latest clip was posted successfully",
-                null,
-                ((id) => {
-                  setTimeout(() => this.removeNotification(id), 5000);
-                }).bind(this)
-              );
-            }
-          }
+  postImage(removeLoading, buf) {
+    this.zync.encryptImage(buf).then((data) => {
+      const clipPackage = this.zync.preparePayload(null, data.salt, data.iv, "IMAGE");
+
+      this.readTimestamps.push(clipPackage.timestamp);
+      this.api.requestUploadToken(clipPackage).then((uploadToken) => {
+        if (removeLoading) {
+          this.removeNotification("zync_posting_clip");
+        }
+
+        chrome.notifications.create("zync_image_upload", {
+          type: "progress",
+          iconUrl: '/images/icons/icon128.png',
+          title: "Zync",
+          message: "Uploading image from clipboard",
+          progress: 0
+        })
+
+        var request = new XMLHttpRequest();
+
+        request.upload.addEventListener('progress', (event) => {
+          chrome.notifications.update("zync_image_upload", {progress: Math.round((event.loaded / event.total) * 100)});
         });
+
+        request.addEventListener('load', (e) => {
+          this.removeNotification("zync_image_upload");
+          this.postClipboardPostedNotification();
+        });
+
+        this.api.upload(request, uploadToken, data.encrypted);
+        clipPackage.payload = {data: base64.encode(buf)};
+        this.appendToHistory(clipPackage);
+      })
+    })
+  }
+
+  postText(removeLoading, data) {
+    this.zync.createTextPayload(data).then((payload) => {
+      this.readTimestamps.push(payload.timestamp);
+      this.api.postClipboard(payload).then((res) => {
+        if (res.success) {
+          if (removeLoading) {
+            this.removeNotification("zync_posting_clip");
+          }
+
+          this.appendToHistory(payload);
+          this.postClipboardPostedNotification();
+        }
       });
+    });
+  }
+
+  // post clipboard posted notif.
+  // remove after five seconds later to avoid
+  // notification center spam
+  postClipboardPostedNotification() {
+    if (this.zync.notifyClipChange()) {
+      this.sendNotification(
+        "Clipboard posted!",
+        "Your latest clip was posted successfully",
+        null,
+        ((id) => {
+          setTimeout(() => this.removeNotification(id), 5000);
+        }).bind(this)
+      );
     }
   }
 
   appendToHistory(clip) {
     // is the clip encrypted?
-    if (clip.payload && !clip.payload.data) {
+    if (clip.payload && !clip.payload.data && clip["payload-type"] === "TEXT") {
       // decrypt then append to history
-      this.zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+      this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
         clip.payload = payload;
         this.appendToHistory(clip);
       });
@@ -123,17 +181,30 @@ export default class Background {
     if (!this.zync.syncDown()) {
       return;
     }
+
+    data.encryption = JSON.parse(data.encryption);
   
     if (this.readTimestamps.indexOf(parseInt(data.timestamp, 10)) === -1) {
-      this.api.getClipboard(data.timestamp).then(this.updateToClip.bind(this)).then(this.appendToHistory.bind(this));
+      if (data["payload-type"] === "TEXT") {
+        this.api.getClipboard(data.timestamp).then(this.updateToClip.bind(this)).then(this.appendToHistory.bind(this));
+      } else if (data["payload-type"] === "IMAGE") {
+        this.getImage(data).then((clip) => {
+          this.lastRead = clip.payload.data;
+          this.appendToHistory(clip);
+
+          if (this.zync.notifyClipChange()) {
+            this.sendNotification("Clipboard updated!", "An image has been written to your clipboard", "zync_new_content");
+          }
+        })
+      }
     }
   }
 
   updateToClip(clip) {
-   return this.zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+   return this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
       this.readTimestamps.push(clip.timestamp);
       this.lastRead = payload.data;
-      this.writeToClipboard(payload.data);
+      this.writeTextToClipboard(payload.data);
 
       if (this.zync.notifyClipChange()) {
         var preview = payload.data.split("\n")[0].trim();
@@ -180,7 +251,7 @@ export default class Background {
     chrome.notifications.clear(id);
   }
 
-  writeToClipboard(text) {
+  writeTextToClipboard(text) {
     var copyFrom = document.createElement("textarea");
     copyFrom.textContent = text;
     var body = document.getElementsByTagName('body')[0];

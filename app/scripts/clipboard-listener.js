@@ -1,3 +1,5 @@
+import base64 from 'base64-arraybuffer';
+
 var helper = null;
 var last;
 
@@ -8,31 +10,58 @@ export default class ClipboardListener {
     }
 
     checkClipboard() {
-        const first = last === undefined;
         var bg = chrome.extension.getBackgroundPage();
     
         if (helper === null || helper === undefined) {
-            helper = bg.document.createElement("textarea");
+            helper = bg.document.createElement("div");
             helper.id = "helper";
             helper.style.position = "absolute";
             helper.style.border = "none";
+            helper.contentEditable = true;
             document.body.appendChild(helper);
-        } else {
-            helper.value = "";
-        }
-    
-        helper.select();
-        bg.document.execCommand("Paste");
-    
-        var data = helper.value;
 
-        if (data === last || first) {
-            last = data;
-            return;
+            helper.addEventListener('paste', (event) => {
+                var first = last === undefined;
+                const clipItem = event.clipboardData.items[event.clipboardData.items.length - 1];
+
+                if (clipItem.type.indexOf("image") !== -1) {
+                    var blob = clipItem.getAsFile();
+                    
+                    var fileReader = new FileReader();
+
+                    fileReader.readAsDataURL(blob);
+                    fileReader.addEventListener('loadend', (e) => {
+                        var result = fileReader.result;
+
+                        if (result === last || first) {
+                            last = result;
+                            return;
+                        }
+
+                        last = result;
+
+                        result = result.substring(result.indexOf("base64,") + 7);
+                        result = base64.decode(result);
+                        this.callback("IMAGE", result);
+                    })
+                } else if (clipItem.type.indexOf("text") !== -1) {
+                    clipItem.getAsString((data) => {
+                        if (data === last || first) {
+                            last = data;
+                            return;
+                        }
+
+                        this.callback("TEXT", data);
+                        last = data;
+                    });
+                }
+            })
+        } else {
+            helper.textContent = "";
         }
     
-        last = data;
-        this.callback(data);
+        helper.focus();
+        bg.document.execCommand("Paste");
     }
     
     listening() {
@@ -40,7 +69,7 @@ export default class ClipboardListener {
     }
 
     activate() {
-        this.taskId = setInterval(this.checkClipboard.bind(this), 500);
+        this.taskId = setInterval(this.checkClipboard.bind(this), 1000);
     }
 
     deactivate() {

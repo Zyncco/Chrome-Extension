@@ -107,20 +107,26 @@ document.querySelector('#history-icon').addEventListener('click', () => {
 
         // add our text to the content container
         contentContainer.appendChild(text);
+
+        const copyAction = document.createElement('i');
+        copyAction.classList.add("zync-history-action", "material-icons", "md-dark");
+        copyAction.innerHTML = "content_copy";
+  
+        copyAction.addEventListener('click', () => {
+          writeToClipboard(clip.payload.data);
+        });
+  
+        actionsContainer.appendChild(copyAction);
       }
 
-      // TODO actions
-      const copyAction = document.createElement('i');
-      copyAction.classList.add("zync-history-action", "material-icons", "md-dark");
-      copyAction.innerHTML = "content_copy";
+      if (clip["payload-type"] === "IMAGE") {
+        var image = document.createElement('img');
 
-      copyAction.addEventListener('click', () => {
-        if (clip["payload-type"] === "TEXT") {
-          writeToClipboard(clip.payload.data);
-        }
-      });
+        image.src = "data:image/png;base64," + clip.payload.data;
+        image.classList.add("zync-history-image");
 
-      actionsContainer.appendChild(copyAction);
+        contentContainer.appendChild(image);
+      }
 
       card.appendChild(contentContainer);
       card.appendChild(actionsContainer);

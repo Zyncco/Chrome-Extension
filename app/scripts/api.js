@@ -34,7 +34,7 @@ export default class ZyncAPI {
     });
   }
 
-  request(route, data) {
+  requestRaw(route, data) {
     if (!data) {
       data = {}
     }
@@ -48,7 +48,11 @@ export default class ZyncAPI {
       data.headers['X-ZYNC-TOKEN'] = this.token;
     }
 
-    return fetch(url + route, data)
+    return fetch(url + route, data);
+  }
+
+  request(route, data) {
+    return this.requestRaw(route, data)
              .then((res) => res.json()).then((res) => ZyncAPI.genericErrorManagement(res));
   }
 
@@ -96,6 +100,22 @@ export default class ZyncAPI {
 
   postClipboard(data) {
     return this.post('/clipboard', {data});
+  }
+
+  requestUploadToken(data) {
+    return this.post('/clipboard/upload', {data}).then((res) => res.data.token);
+  }
+
+  upload(request, token, data) {
+    request.open("POST", url + "/clipboard/upload/" + token, true);
+    request.setRequestHeader('X-ZYNC-TOKEN', this.token);
+    request.send(data);
+
+    return request;
+  }
+
+  downloadLarge(timestamp) {
+    return this.requestRaw('/clipboard/' + timestamp + "/raw").then((res) => res.arrayBuffer());
   }
 
   static genericErrorManagement(res) {

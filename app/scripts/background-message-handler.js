@@ -68,7 +68,12 @@ export default class MessageHandler {
           var promises = [];
 
           clips.forEach((clip) => {
-            promises.push(this.zync.decrypt(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+            if (clip["payload-type"] === "IMAGE") {
+              this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip));
+              return;
+            }
+
+            promises.push(this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
               clip.payload = payload;
               this.background.appendToHistory(clip);
             }))
