@@ -45,46 +45,54 @@ export default class MessageHandler {
   setPass(message, sendResponse) {
     this.zync.setEncryptionPass(message.pass).then((pass) => {
       sendResponse({success: true});
-
-      // are we logging in? If so, get the latest clip
-      // and activate clipboard listener.
-      // we also need to be active. Don't want to be uselessly
-      // running the clip listener and toying around when we're not
-      // supposed to
-      if (message.login && this.zync.isActive()) {
-        this.api.getClipboard().then((clip) => {
-          this.background.updateToClip(clip).then((payload) => {
-            this.background.clipboardListener.activate();
-          });
-        });
-      }
-
-      this.api.getHistory().then((data) => {
-        var timestamps = data.history.filter((x) => this.zync.isTypeSupported(x["payload-type"]))
-                                     .map((x) => x.timestamp);
-        
-        this.api.getClipboard(timestamps).then((data) => {
-          const clips = data.clipboards;
-          var promises = [];
-
-          clips.forEach((clip) => {
-            if (clip["payload-type"] === "IMAGE") {
-              this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip));
-              return;
-            }
-
-            promises.push(this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
-              clip.payload = payload;
-              this.background.appendToHistory(clip);
-            }))
-          });
-
-          Promise.all(promises).catch((error) => this.background.handleDecryptionError());
-        })
-      })
+      message.requireLogin = true;
+      setup(message, null);
     });
 
     return true;
+  }
+
+  setup(message, sendResponse) {
+    // are we logging in? If so, get the latest clip
+    // and activate clipboard listener.
+    // we also need to be active. Don't want to be uselessly
+    // running the clip listener and toying around when we're not
+    // supposed to
+    if ((!message.requireLogin || message.login) && this.zync.isActive()) {
+      this.api.getClipboard().then((clip) => {
+        this.background.updateToClip(clip).then((payload) => {
+          this.background.clipboardListener.activate();
+        });
+      });
+    }
+
+    this.api.getHistory().then((data) => {
+      var timestamps = data.history.filter((x) => this.zync.isTypeSupported(x["payload-type"]))
+                                   .map((x) => x.timestamp);
+      
+      this.api.getClipboard(timestamps).then((data) => {
+        const clips = data.clipboards;
+        var promises = [];
+
+        clips.forEach((clip) => {
+          if (clip["payload-type"] === "IMAGE") {
+            this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip));
+            return;
+          }
+
+          promises.push(this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+            clip.payload = payload;
+            this.background.appendToHistory(clip);
+          }))
+        });
+
+        Promise.all(promises).catch((error) => this.background.handleDecryptionError());
+      })
+    });
+
+    if (sendResponse) {
+      sendResponse({success: true});
+    }
   }
 
   getActive(message, sendResponse) {

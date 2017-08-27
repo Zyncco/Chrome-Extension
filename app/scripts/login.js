@@ -64,6 +64,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         transitionTo("crypto-pass", "loading");
       } else {
         transitionTo("setup", "loading");
+        sendMessage("setup", {});
       }
     });
   }
