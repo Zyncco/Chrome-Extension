@@ -8,7 +8,7 @@ const decoder = new TextDecoder("utf-8");
 
 export default class Zync {
   constructor() {
-    this.active = false;
+    this.active = true;
     this.encryptionPassword = null;
     this["sync-down"] = true;
     this["sync-up"] = true;
