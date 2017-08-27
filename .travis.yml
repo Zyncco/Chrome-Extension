@@ -3,7 +3,7 @@ node_js:
   - "node"
 
 before_script:
-  - sed -i 's/"version": "\([0-9]\+\.[0-9]\+\.\)[0-9]\+",/"version": "\1'"$TRAVIS_BUILD_NUMBER"'",/' app/manifest.json
+  - ./scripts/before_script.sh
 
 script:
   - npm install
