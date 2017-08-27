@@ -58,7 +58,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // we only need to handle loginSuccess
   if (message.method === "loginSuccess") {
     chrome.browserAction.setPopup({popup: "pages/popup/main.html"});
-<<<<<<< HEAD
 
     chrome.storage.local.get('encryptionPass', (pass) => {
       if (!pass) {
@@ -68,9 +67,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendMessage("setup", {});
       }
     });
-=======
-    transitionTo("crypto-pass", "loading");
->>>>>>> parent of 12c1163... Don't needlessly ask for the encryption pass twice
   }
 });
 
