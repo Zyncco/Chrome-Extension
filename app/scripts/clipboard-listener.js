@@ -11,7 +11,7 @@ export default class ClipboardListener {
 
     checkClipboard() {
         var bg = chrome.extension.getBackgroundPage();
-    
+
         if (helper === null || helper === undefined) {
             helper = bg.document.createElement("div");
             helper.id = "helper";
@@ -21,6 +21,8 @@ export default class ClipboardListener {
             document.body.appendChild(helper);
 
             helper.addEventListener('paste', (event) => {
+                event.preventDefault();
+                
                 var first = last === undefined;
                 const clipItem = event.clipboardData.items[event.clipboardData.items.length - 1];
 
@@ -45,15 +47,15 @@ export default class ClipboardListener {
                         this.callback("IMAGE", result);
                     })
                 } else if (clipItem.type.indexOf("text") !== -1) {
-                    clipItem.getAsString((data) => {
-                        if (data === last || first) {
-                            last = data;
-                            return;
-                        }
+                    const data = event.clipboardData.getData("text/plain");
 
-                        this.callback("TEXT", data);
+                    if (data === last || first) {
                         last = data;
-                    });
+                        return;
+                    }
+
+                    this.callback("TEXT", data);
+                    last = data;
                 }
             })
         } else {
