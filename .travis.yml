@@ -13,5 +13,6 @@ cache:
 deploy:
   provider: script
   script: scripts/deploy.sh
+  skip_cleanup: true
   on:
     branch: master
