@@ -30,7 +30,9 @@ export default class ZyncAPI {
   setupFirebase() {
     return navigator.serviceWorker.register('/scripts/firebase-sw.js').then((registration) => {
       firebase.messaging().useServiceWorker(registration);
-      return firebase.messaging().getToken();
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(firebase.messaging().getToken()), 50);
+      });
     });
   }
 
