@@ -31,6 +31,13 @@ export default class Background {
 
     // setup firebase listener
     this.api.firebase().messaging().onMessage(this.handleFirebaseMessage.bind(this));
+
+    setTimeout(() => {
+      // find a more elegant way to check if a user was previously logged in
+      if (this.zync.encryptionPassword) {
+        this.attemptBackgroundLogin();
+      }
+    })
   }
 
   handleDecryptionError() {
@@ -164,6 +171,7 @@ export default class Background {
       const randomToken = data['random-token'];
   
       this.api.validateDevice(apiKey, randomToken).then((response) => {
+        chrome.browserAction.setPopup({popup: "pages/popup/main.html"});
         this.sendMessage("login", "loginSuccess", {});
         console.log("Successfully authenticated device! Completed login process");
       })
@@ -225,7 +233,9 @@ export default class Background {
   
     if (page) {
       chrome.tabs.query({url: "chrome-extension://*/pages/" + page + ".html"}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, message, callback);
+        if (tabs && tabs[0]) {
+          chrome.tabs.sendMessage(tabs[0].id, message, callback);
+        }
       });
     } else {
       chrome.runtime.sendMessage(message, callback);
@@ -271,6 +281,31 @@ export default class Background {
         this.clipboardListener.deactivate();
       }
     }
+  }
+
+  attemptBackgroundLogin() {
+    chrome.browserAction.setPopup({popup: "pages/popup/logging-in.html"});
+
+    this.api.setupFirebase().then((messagingToken) => {
+      chrome.identity.getAuthToken({interactive: false}, (authToken) => {
+        if (chrome.runtime.lastError) {
+          console.log("Could not login from the background because auth token wasn't given");
+          return;
+        }
+
+        if (authToken) {
+          const credential = this.api.firebase().auth.GoogleAuthProvider.credential(null, authToken);
+
+          this.api.firebase().auth().signInWithCredential(credential)
+                                    .catch((error) => console.log(JSON.stringify(error)))
+                                    .then((user) => {
+                                      user.getIdToken(true).then((firebaseToken) => {
+                                        this.api.authenticate(firebaseToken, messagingToken);
+                                      })
+                                    });
+        }
+      });
+    })
   }
 }
 

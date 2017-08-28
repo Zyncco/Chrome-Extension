@@ -57,8 +57,6 @@ function sendMessage(method, message, callback) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // we only need to handle loginSuccess
   if (message.method === "loginSuccess") {
-    chrome.browserAction.setPopup({popup: "pages/popup/main.html"});
-
     chrome.storage.local.get('encryptionPass', (pass) => {
       if (!pass) {
         transitionTo("crypto-pass", "loading");
