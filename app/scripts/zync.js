@@ -1,5 +1,3 @@
-// Polyfill the Web Extensions API for Chrome and Opera
-import browser from 'webextension-polyfill';
 import pako from 'pako';
 import base64 from 'base64-arraybuffer';
 
@@ -27,7 +25,7 @@ export default class Zync {
     ]
 
     // Check storage to see whether or not Zync should be active
-    browser.storage.local.get(settingsKeys).then((settings) => {
+    chrome.storage.local.get(settingsKeys).then((settings) => {
       settingsKeys.forEach((key) => this[key] = settings[key]);
     });
   }
@@ -50,7 +48,7 @@ export default class Zync {
 
   setEncryptionPass(pass) {
     return sha256(pass).then((encryptionPassword) => {
-      browser.storage.local.set({ encryptionPassword });
+      chrome.storage.local.set({ encryptionPassword });
 
       this.encryptionPassword = encryptionPassword;
       return encryptionPassword;
@@ -63,7 +61,7 @@ export default class Zync {
 
   setActive(active) {
     // Store value in browser storage for persistence
-    browser.storage.local.set({ active });
+    chrome.storage.local.set({ active });
 
     this.active = active;
   }
