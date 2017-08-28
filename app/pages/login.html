@@ -25,10 +25,18 @@
         <span class="zync-welcome">Logged in!</span>
         <span class="zync-welcome-subtitle" style="margin-bottom: 30px;">Please enter the password you're using for encryption</span>
 
-        <div class="zync-form-entry mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" id="password" type="password" pattern="\S{10,}">
-          <label class="mdl-textfield__label" for="password">Encryption Pass</label>
-          <span class="mdl-textfield__error">Must be at least 10 characters</span>
+        <div class="zync-pass">
+          <div class="zync-form-entry">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" id="password" type="password" pattern="\S{10,}">
+              <label class="mdl-textfield__label" for="password">Encryption Pass</label>
+              <span class="mdl-textfield__error">Must be at least 10 characters</span>
+            </div>
+          </div>
+
+          <div class="zync-pass-circle" id="pass-circle">
+            <i class="material-icons" style="color: white">arrow_forward</i>
+          </div>
         </div>
       </div>
 

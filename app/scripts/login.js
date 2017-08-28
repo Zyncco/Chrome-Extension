@@ -57,8 +57,8 @@ function sendMessage(method, message, callback) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // we only need to handle loginSuccess
   if (message.method === "loginSuccess") {
-    chrome.storage.local.get('encryptionPass', (pass) => {
-      if (!pass) {
+    chrome.storage.local.get('encryptionPass', (result) => {
+      if (!result.encryptionPass) {
         transitionTo("crypto-pass", "loading");
       } else {
         transitionTo("setup", "loading");
@@ -72,14 +72,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 document.querySelector('#password').addEventListener('keydown', (event) => {
   if ("Enter" === event.key) {
     event.preventDefault();
-    const pass = document.querySelector('#password').value;
-
-    if (pass.length < 10) {
-      return;
-    }
-
-    sendMessage("setPass", {pass, login: true}, (res) => transitionTo("setup", "crypto-pass"))
+    handlePassEnter();
   }
 })
+
+document.querySelector('#pass-circle').addEventListener('click', (event) => {
+  handlePassEnter();
+})
+
+function handlePassEnter() {
+  const pass = document.querySelector('#password').value;
+
+  if (pass.length < 10) {
+    return;
+  }
+
+  sendMessage("setPass", {pass, login: true}, (res) => transitionTo("setup", "crypto-pass"))
+}
 
 transitionTo("intro");

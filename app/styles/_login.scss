@@ -5,6 +5,24 @@
   height: 46px;
 }
 
+.zync-pass {
+  display: flex;
+  width: 75%;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.zync-pass-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #488CFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 10px 20px 10px;
+}
+
 .zync-login-logo {
   margin-top: 20px;
   margin-bottom: 10px;
