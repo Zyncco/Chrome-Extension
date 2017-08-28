@@ -25,8 +25,12 @@ export default class Zync {
     ]
 
     // Check storage to see whether or not Zync should be active
-    chrome.storage.local.get(settingsKeys).then((settings) => {
-      settingsKeys.forEach((key) => this[key] = settings[key]);
+    chrome.storage.local.get(settingsKeys, (settings) => {
+      settingsKeys.forEach((key) => {
+        if (settings[key]) {
+          this[key] = settings[key];
+        }
+      });
     });
   }
 
