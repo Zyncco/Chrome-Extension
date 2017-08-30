@@ -157,6 +157,7 @@ export default class Background {
     }
 
     this.sortHistory();
+    return clip;
   }
 
   sortHistory() {
@@ -171,7 +172,14 @@ export default class Background {
       const randomToken = data['random-token'];
   
       this.api.validateDevice(apiKey, randomToken).then((response) => {
-        chrome.browserAction.setPopup({popup: "pages/popup/main.html"});
+        if (this.zync.encryptionPassword) {
+          this.messageHandler.setup({}, (res) => {
+            chrome.browserAction.setPopup({popup: "pages/popup/main.html"});
+          });
+        } else {
+          chrome.browserAction.setPopup({popup: "pages/popup/main.html"});
+        }
+
         this.sendMessage("login", "loginSuccess", {});
         console.log("Successfully authenticated device! Completed login process");
       })

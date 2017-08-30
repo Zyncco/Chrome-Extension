@@ -44,9 +44,8 @@ export default class MessageHandler {
 
   setPass(message, sendResponse) {
     this.zync.setEncryptionPass(message.pass).then((pass) => {
-      sendResponse({success: true});
       message.requireLogin = true;
-      setup(message, null);
+      this.setup(message, sendResponse);
     });
 
     return true;
@@ -76,7 +75,7 @@ export default class MessageHandler {
 
         clips.forEach((clip) => {
           if (clip["payload-type"] === "IMAGE") {
-            this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip));
+            promises.push(this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip)));
             return;
           }
 
@@ -86,12 +85,12 @@ export default class MessageHandler {
           }))
         });
 
-        Promise.all(promises).catch((error) => this.background.handleDecryptionError());
+        Promise.all(promises).catch((error) => this.background.handleDecryptionError()).then(() => sendResponse({success: true}));
       })
     });
 
     if (sendResponse) {
-      sendResponse({success: true});
+      return true;
     }
   }
 

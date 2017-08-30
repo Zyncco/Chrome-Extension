@@ -24,13 +24,19 @@ export default class Zync {
       'notify-clip-change'
     ]
 
-    // Check storage to see whether or not Zync should be active
+    // Update any defined values from local storage
     chrome.storage.local.get(settingsKeys, (settings) => {
       settingsKeys.forEach((key) => {
-        if (settings[key]) {
+        if (settings[key] !== undefined) {
           this[key] = settings[key];
         }
       });
+
+      // save all settings
+      var settings = {};
+
+      settingsKeys.forEach((key) => settings[key] = this[key]);
+      chrome.storage.local.set(settings);
     });
   }
 

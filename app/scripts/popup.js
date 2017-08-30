@@ -181,9 +181,7 @@ function updateSettings(register) {
       }
 
       passElement.value = "";
-      storage.set({encryptionPassword: pass}, () => {
-        sendMessage('updateSettings', {});
-      });
+      sendMessage("setPass", {pass});
       dialog.close();
     });
 

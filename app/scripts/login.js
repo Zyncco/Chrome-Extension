@@ -57,8 +57,8 @@ function sendMessage(method, message, callback) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // we only need to handle loginSuccess
   if (message.method === "loginSuccess") {
-    chrome.storage.local.get('encryptionPass', (result) => {
-      if (!result.encryptionPass) {
+    chrome.storage.local.get('encryptionPassword', (result) => {
+      if (!result.encryptionPassword) {
         transitionTo("crypto-pass", "loading");
       } else {
         transitionTo("setup", "loading");
@@ -87,7 +87,8 @@ function handlePassEnter() {
     return;
   }
 
-  sendMessage("setPass", {pass, login: true}, (res) => transitionTo("setup", "crypto-pass"))
+  transitionTo("loading-history", "crypto-pass")
+  sendMessage("setPass", {pass, login: true}, (res) => transitionTo("setup", "loading-history"))
 }
 
 transitionTo("intro");
