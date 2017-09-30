@@ -26,6 +26,7 @@ document.querySelector("#settings-icon").addEventListener('click', () => {
 })
 
 document.querySelector('#history-icon').addEventListener('click', () => {
+  transitionMenu("loading", "main");
   sendMessage("getHistory", {}, (res) => {
     if (!res || !res.history || res.history.length === 0) {
       return;
@@ -140,7 +141,7 @@ document.querySelector('#history-icon').addEventListener('click', () => {
       }
     }
 
-    transitionMenu("history", "main");
+    transitionMenu("history", "loading");
   })
 })
 

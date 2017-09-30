@@ -4,7 +4,8 @@ var helper = null;
 var last;
 
 export default class ClipboardListener {
-    constructor(callback) {
+    constructor(background, callback) {
+        this.background = background;
         this.callback = callback;
         this.taskId = -1;
     }
@@ -34,28 +35,30 @@ export default class ClipboardListener {
                     fileReader.readAsDataURL(blob);
                     fileReader.addEventListener('loadend', (e) => {
                         var result = fileReader.result;
-
-                        if (result === last || first) {
-                            last = result;
+                        this.background.zync.sha256(result).then((resultHash) => {
+                            if (resultHash === last || first) {
+                                last = resultHash;
+                                return;
+                            }
+    
+                            last = resultHash;
+    
+                            result = result.substring(result.indexOf("base64,") + 7);
+                            result = base64.decode(result);
+                            this.callback("IMAGE", result);
+                        })
+                    });
+                } else if (clipItem.type.indexOf("text") !== -1) {
+                    const data = event.clipboardData.getData("text/plain");
+                    this.background.zync.sha256(data).then((resultHash) => {
+                        if (resultHash === last || first) {
+                            last = resultHash;
                             return;
                         }
 
-                        last = result;
-
-                        result = result.substring(result.indexOf("base64,") + 7);
-                        result = base64.decode(result);
-                        this.callback("IMAGE", result);
+                        last = resultHash;
+                        this.callback("TEXT", data);
                     })
-                } else if (clipItem.type.indexOf("text") !== -1) {
-                    const data = event.clipboardData.getData("text/plain");
-
-                    if (data === last || first) {
-                        last = data;
-                        return;
-                    }
-
-                    this.callback("TEXT", data);
-                    last = data;
                 }
             })
         } else {

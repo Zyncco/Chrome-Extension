@@ -39,7 +39,37 @@ export default class MessageHandler {
   }
 
   getHistory(message, sendResponse) {
-    sendResponse({history: this.background.history});
+    this.api.getHistory().then((data) => {
+      const currentTimestamps = this.background.history.map((x) => x.timestamp);
+      var timestamps = data.history.filter((x) => this.zync.isTypeSupported(x["payload-type"]))
+                                   .map((x) => x.timestamp)
+                                   .filter((x) => !currentTimestamps.includes(x));
+
+      this.api.getClipboard(timestamps).then((data) => {
+        const clips = data.clipboards;
+        var promises = [];
+
+        if (clips) {
+          clips.forEach((clip) => {
+            if (clip["payload-type"] === "IMAGE") {
+              promises.push(this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip)));
+              return;
+            }
+  
+            promises.push(this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
+              clip.payload = payload;
+              this.background.appendToHistory(clip);
+            }))
+          });
+        }
+
+        Promise.all(promises).catch((error) => this.background.handleDecryptionError()).then(() => sendResponse({history: this.background.history}));
+      });
+    }).catch((error) => {
+      sendResponse({history: this.background.history});
+    });
+
+    return true;
   }
 
   setPass(message, sendResponse) {
@@ -65,33 +95,8 @@ export default class MessageHandler {
       });
     }
 
-    this.api.getHistory().then((data) => {
-      var timestamps = data.history.filter((x) => this.zync.isTypeSupported(x["payload-type"]))
-                                   .map((x) => x.timestamp);
-      
-      this.api.getClipboard(timestamps).then((data) => {
-        const clips = data.clipboards;
-        var promises = [];
-
-        clips.forEach((clip) => {
-          if (clip["payload-type"] === "IMAGE") {
-            promises.push(this.background.getImage(clip).then((finishedClip) => this.background.appendToHistory(clip)));
-            return;
-          }
-
-          promises.push(this.zync.decryptText(clip.payload, clip.encryption.salt, clip.encryption.iv).then((payload) => {
-            clip.payload = payload;
-            this.background.appendToHistory(clip);
-          }))
-        });
-
-        Promise.all(promises).catch((error) => this.background.handleDecryptionError()).then(() => sendResponse({success: true}));
-      })
-    });
-
-    if (sendResponse) {
-      return true;
-    }
+    this.getHistory({}, () => {});
+    sendResponse({success: true});
   }
 
   getActive(message, sendResponse) {

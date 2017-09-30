@@ -16,7 +16,7 @@ export default class Background {
     this.zync = new Zync();
     this.api = new ZyncAPI();
     this.messageHandler = new MessageHandler(this);
-    this.clipboardListener = new ClipboardListener(this.handleClipboardEvent.bind(this));
+    this.clipboardListener = new ClipboardListener(this, this.handleClipboardEvent.bind(this));
     // holds all the timestamps we've already read and processed
     this.readTimestamps = [0];
     // the last clip data we read from firebase
@@ -152,11 +152,12 @@ export default class Background {
 
     this.history.push(clip);
 
+    this.sortHistory();
+
     if (this.history.length > 10) {
-      this.history = this.history.slice(1, 11);
+      this.history = this.history.slice(0, 10);
     }
 
-    this.sortHistory();
     return clip;
   }
 
